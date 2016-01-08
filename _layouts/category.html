@@ -24,11 +24,14 @@ layout: default
         {% endif %}
       {% endfor %}
       <a href="/about/">About</a>
+      		&nbsp;&nbsp;·&nbsp;&nbsp;
+      <a href="/category/">Category</a>
     </div>
 </header>
 
-<main>
 
+<h1>{{ page.category }}</h1>
+<!-- <h1>Machine Learning </h1> -->
 <ul>
 {% for post in site.categories[page.category] %}
   <li>
@@ -36,5 +39,3 @@ layout: default
   </li>
 {% endfor %}
 </ul>
-
-</main>
