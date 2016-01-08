@@ -23,6 +23,7 @@ paginate:	5
 
 url: "http://otzslayer.github.io/" # the base hostname & protocol for your site
 baseurl: ""
+permalink: /:categories/:title/
 #used to display twitter cards
 #twitter_handle: '@dirkfabisch'
 
