@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "An Introduction to Statistical Learning"
+title:  "[교재] An Introduction to Statistical Learning"
 categories: machine learning
 image: /assets/article_images/2016-01-08-an_introduction_to_statistical_learning/MLseries.png
 ---
