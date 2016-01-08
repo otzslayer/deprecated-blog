@@ -1,95 +1,37 @@
----
-layout: default
----
-
-<div class="teaserimage">
-    <div class="teaserimage-image" {% if site.cover %}style="background-image: url({{ site.cover }})"{% endif %}>
-        Teaser Image
-    </div>
-</div>
-
-<header class="blog-header">
-    {% if site.logo %}
-      <a class="blog-logo" href="{{site.url}}" style="background-image: url('{{ site.logo }}')">{{ site.title }}</a>
-    {% endif %}
-    <h1 class="blog-title">{{ site.title }}</h1>
-    <h2 class="blog-description">{{ site.description }}</h2>
-    <div class="custom-links">
-      {% for social in site.social %}
-        {% if social.url %}
-            <a class="icon-{{ social.icon }}" href="{{ social.url }}" {% if social.desc %} title="{{ social.desc }}"{% endif %}">
-              <i class="fa fa-{{ social.icon }}"></i>
-            </a>
-            &nbsp;&nbsp;·&nbsp;&nbsp;
-        {% endif %}
-      {% endfor %}
-      <a href="/about/">About</a>
-    </div>
-</header>
-
-
-<main class="content" role="main">
-
-    {% if site.tags.featured %}
-    <h5 class="index-headline featured"><span>Featured</span></h5>
-
-    <div class="container featured">
-      {% for post in site.tags.featured %}
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting" role="article">
-          <div class="article-item">
-            <header class="post-header">
-              <h2 class="post-title" itemprop="name"><a href="{{ post.url }}" itemprop="url">{{ post.title }}</a></h2>
-            </header>
-            <section class="post-excerpt" itemprop="description">
-              <p>{{ post.content | strip_html | truncatewords: 50 }}</p>
-            </section>
-            <div class="post-meta">
-              <time datetime="{{ post.date | date_to_long_string }}">{{ post.date | date_to_long_string }}</time>
-  <!--            <span class="post-tags-set">on {{#foreach tags}}<span class="post-tag-{{slug}}">{{#if @first}}{{else}}, {{/if}}<a href="/tag/{{slug}}">{{name}}</a></span>{{/foreach}}</span>-->
-            </div>
-          </div>
-        </article>
-      {% endfor %}
-    </div>
-
-    <h5 class="index-headline normal"><span>Regular</span></h5>
-    {% endif %}
-
-    <div class="cf frame">
-      {% for post in paginator.posts %}
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting" role="article">
-          <div class="article-item">
-            <header class="post-header">
-              <h2 class="post-title" itemprop="name"><a href="{{ post.url }}" itemprop="url">{{ post.title }}</a></h2>
-            </header>
-            <section class="post-excerpt" itemprop="description">
-              <p>{{ post.excerpt | strip_html | truncatewords: 50 }}</p>
-            </section>
-            <div class="post-meta">
-              <time datetime="{{ post.date | date_to_long_string }}">{{ post.date | date_to_long_string }}</time>
-<!--            <span class="post-tags-set">on {{#foreach tags}}<span class="post-tag-{{slug}}">{{#if @first}}{{else}}, {{/if}}<a href="/tag/{{slug}}">{{name}}</a></span>{{/foreach}}</span>-->
-            </div>
-          </div>
-        </article>
-      {% endfor %}
-    </div>
-
-    <nav class="pagination" role="navigation">
-      {% if paginator.next_page %}
-        <a class="newer-posts" href="/page{{paginator.next_page}}">&larr; Older posts</a>
-      {% endif %}
-      <span class="page-number">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
-      {% if paginator.previous_page %}
-        {% if paginator.page == 2 %}
-          <a class="older-posts" href="/">Newer posts &rarr;</a>
-        {% else %}
-          <a class="older-posts" href="/page{{paginator.previous_page}}">Newer posts &rarr;</a>
-        {% endif %}
-      {% endif %}
-    </nav>
-
-
-    <!-- {{!! After all the posts, we have the previous/next pagination links }}
-    {{pagination}} -->
-
-</main>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1404.34">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000; min-height: 14.0px}
+    p.p7 {margin: 0.0px 0.0px 12.0px 0.0px; line-height: 14.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000}
+    span.s1 {font-kerning: none}
+    span.s2 {text-decoration: underline ; font-kerning: none; color: #0000ee; -webkit-text-stroke: 0px #0000ee}
+    span.s3 {text-decoration: underline ; font-kerning: none}
+    span.s4 {font: 12.0px Symbol; text-decoration: underline ; font-kerning: none; color: #0000ee; -webkit-text-stroke: 0px #0000ee}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">--- layout: default ---</span></p>
+<p class="p1"><span class="s1">Teaser Image<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1">{% if site.logo %} <a href="file:///Users/Han/otzslayer.github.io/%7B%7Bsite.url%7D%7D"><span class="s2">{{ site.title }}</span></a> {% endif %}</span></p>
+<h1 style="margin: 0.0px 0.0px 16.1px 0.0px; line-height: 28.0px; font: 24.0px Times; color: #000000; -webkit-text-stroke: #000000"><span class="s1"><b>{{ site.title }}</b></span></h1>
+<h2 style="margin: 0.0px 0.0px 14.9px 0.0px; line-height: 22.0px; font: 18.0px Times; color: #000000; -webkit-text-stroke: #000000"><span class="s1"><b>{{ site.description }}</b></span></h2>
+<p class="p1"><span class="s1">{% for social in site.social %} {% if social.url %}   Â·   {% endif %} {% endfor %} <a href="file:///about/"><span class="s2">About</span></a><span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1">{% if site.tags.featured %}</span></p>
+<p class="p4"><span class="s1"></span><br></p>
+<h5 style="margin: 0.0px 0.0px 16.6px 0.0px; line-height: 13.0px; font: 10.0px Times; color: #000000; -webkit-text-stroke: #000000"><span class="s1"><b>Regular</b></span></h5>
+<p class="p1"><span class="s1">{% endif %}</span></p>
+<p class="p1"><span class="s1">{% for post in paginator.posts %}</span></p>
+<h2 style="margin: 0.0px 0.0px 14.9px 0.0px; line-height: 22.0px; font: 18.0px Times; color: #0000ee; -webkit-text-stroke: #0000ee"><span class="s3"><a href="file:///Users/Han/otzslayer.github.io/%7B%7B%20post.url%20%7D%7D"><b>{{ post.title }}</b></a></span></h2>
+<p class="p7"><span class="s1">{{ post.excerpt | strip_html | truncatewords: 50 }}</span></p>
+<p class="p1"><span class="s1">{{ post.date | date_to_long_string }}<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1">{% endfor %}<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1">{% if paginator.next_page %} <a href="file:///page%7B%7Bpaginator.next_page%7D%7D"><span class="s4">←</span><span class="s2"> Older posts</span></a> {% endif %} Page {{ paginator.page }} of {{ paginator.total_pages }} {% if paginator.previous_page %} {% if paginator.page == 2 %} <a href="file:///"><span class="s2">Newer posts </span><span class="s4">→</span></a> {% else %} <a href="file:///page%7B%7Bpaginator.previous_page%7D%7D"><span class="s2">Newer posts </span><span class="s4">→</span></a> {% endif %} {% endif %}<span class="Apple-converted-space"> </span></span></p>
+</body>
+</html>
