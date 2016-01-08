@@ -7,8 +7,8 @@
   <meta name="Generator" content="Cocoa HTML Writer">
   <meta name="CocoaVersion" content="1404.34">
   <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 17.0px; font: 15.0px Menlo; color: #222222; -webkit-text-stroke: #222222}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 17.0px; font: 15.0px Menlo; color: #222222; -webkit-text-stroke: #222222; min-height: 18.0px}
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 20.0px; font: 12.0px Menlo; color: #000000; -webkit-text-stroke: #999999}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 20.0px; font: 12.0px Menlo; color: #000000; -webkit-text-stroke: #999999; min-height: 14.0px}
     span.s1 {font-kerning: none}
   </style>
 </head>
@@ -16,15 +16,15 @@
 <p class="p1"><span class="s1">---</span></p>
 <p class="p1"><span class="s1">layout: default</span></p>
 <p class="p1"><span class="s1">---</span></p>
-<p class="p1"><span class="s1">&lt;h1&gt;Simple Category Pages with vanilla Jekyll&lt;/h1&gt;</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">{% unless page.content == '' %}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;p&gt;{{ page.content }}&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1">{% endunless %}</span></p>
+<p class="p1"><span class="s1">&lt;h1&gt;{{ page.category }}&lt;/h1&gt;</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">{% for post in site.categories.[page.category] %}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;h2&gt;&lt;a href=""&gt;&lt;/a&gt;&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;p&gt;&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1">&lt;ul&gt;</span></p>
+<p class="p1"><span class="s1">{% for post in site.categories[page.category] %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{{ post.date | date: "%B %d, %Y" }}: &lt;a href="{{ post.url }}"&gt;{{ post.title }}&lt;/a&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/li&gt;</span></p>
 <p class="p1"><span class="s1">{% endfor %}</span></p>
+<p class="p1"><span class="s1">&lt;/ul&gt;</span></p>
 </body>
 </html>
