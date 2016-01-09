@@ -33,7 +33,7 @@ permalink: /about/
 
 <main class="content" role="main">
 
-<center> <img src="/assets/images/han.jpg">
+<center>
 <h3>한재윤</h3>
 <h3>Jaeyoon Han</h3>
 
