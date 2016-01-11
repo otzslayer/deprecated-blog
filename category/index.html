@@ -43,7 +43,7 @@ title: Categories | Become a Data Scientist
 {% assign sortedcategories = categories | split:' ' | sort %}
 
 {% for category in sortedcategories %}
-  <h3 id="{{ category }}">{{ category }}</h3>
+  <h3 id="{{ category }}">{{ category | replace: '-',' ' | upcase }}</h3>
   <ul>
   {% for post in site.categories[category] %}
     <li>
