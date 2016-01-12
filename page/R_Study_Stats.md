@@ -1,7 +1,7 @@
 #경희대학교 데이터 분석 스터디
 ### R을 활용한 기초 통계학
 
-##### 교재 : [R과 함께하는 통계학의 이해](http://www.bigbook.or.kr/bbs/bbs/board.php?bo_table=bo16&wr_id=5
+##### 교재 : [R과 함께하는 통계학의 이해](http://www.bigbook.or.kr/bbs/bbs/board.php?bo_table=bo16&wr_id=5)
 
 ###### 목적 : R을 활용한 기본적인 통계 개념의 숙지
 
