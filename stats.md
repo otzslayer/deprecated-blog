@@ -1,13 +1,14 @@
 ---
-layout : default
+layout : blank
 ---
 
 # 경희대학교 데이터 분석 스터디
+---
 ### R을 활용한 기초 통계학
 
-##### 교재 : [R과 함께하는 통계학의 이해](http://www.bigbook.or.kr/bbs/bbs/board.php?bo_table=bo16&wr_id=5)
+#### 교재 : [R과 함께하는 통계학의 이해](http://www.bigbook.or.kr/bbs/bbs/board.php?bo_table=bo16&wr_id=5)
 
-###### 목적 : R을 활용한 기본적인 통계 개념의 숙지
+##### 목적 : R을 활용한 기본적인 통계 개념의 숙지
 
 
 | 일자 | 주제 |	발표자 | 발표자료 |
@@ -18,5 +19,6 @@ layout : default
 |TBD|8장. 독립표본과 대응표본 : 두 집단의 비교 <br/> 9장. 분산분석 : 여러 집단의 비교|||
 |TBD|10장. 상관분석과 회귀분석 : 두 변수의 관계 <br/> 11장. 분할표 자료분석 : 범주들의 관계|||
 
-<font size = 2> 덧(160112 추가): </font>  
-<font size = 1> [coursera 통계 강의(Statistical Inference)](https://www.coursera.org/learn/statistical-inference/) 를 함께 수강하면서 일주일에 한 번씩 스터디 하실 분을 모으고 있습니다. 관심 있으면 알려주세요. 해당 강의 시작일은 1월 18일까지고 등록 기한은 열흘 넘게 남았습니다. </font>
+<font size = 1> **덧(160112 추가):** </font>  
+<font size = 1> [coursera 통계 강의(Statistical Inference)](https://www.coursera.org/learn/statistical-inference/) 를 함께 수강하면서 일주일에 한 번씩 스터디 하실 분을 모으고 있습니다.  
+관심 있으면 알려주세요. 해당 강의 시작일은 1월 18일까지고 등록 기한은 열흘 넘게 남았습니다. </font>
