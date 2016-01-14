@@ -19,6 +19,6 @@ layout : blank
 |TBD|8장. 독립표본과 대응표본 : 두 집단의 비교 <br/> 9장. 분산분석 : 여러 집단의 비교|||
 |TBD|10장. 상관분석과 회귀분석 : 두 변수의 관계 <br/> 11장. 분할표 자료분석 : 범주들의 관계|||
 
-<font size = 1> **덧(160112 추가):** </font>  
-<font size = 1> [coursera 통계 강의(Statistical Inference)](https://www.coursera.org/learn/statistical-inference/) 를 함께 수강하면서 일주일에 한 번씩 스터디 하실 분을 모으고 있습니다.  
-관심 있으면 알려주세요. 해당 강의 시작일은 1월 18일까지고 등록 기한은 열흘 넘게 남았습니다. </font>
+**덧(160112 추가):**  
+[coursera 통계 강의(Statistical Inference)](https://www.coursera.org/learn/statistical-inference/) 를 함께 수강하면서 일주일에 한 번씩 스터디 하실 분을 모으고 있습니다.  
+관심 있으면 알려주세요. 해당 강의 시작일은 1월 18일까지고 등록 기한은 열흘 넘게 남았습니다.
