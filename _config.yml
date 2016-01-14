@@ -11,7 +11,7 @@ title: "Become A Data Scientist"
 description: > # this means to ignore newlines until "email:"
    Data Analysis & Visualization
 
-email: a-mail@mail.mail
+email: otzslayer@gmail.com
 #blog logo
 logo: "/assets/images/ds_icon.png"
 # blog cover
@@ -48,12 +48,12 @@ social:
     share_title: ?t=
     share_link: "&amp;u="
 
-#  - icon:	github
-#    url:	https://github.com/dirkfabisch
-#    desc:	Fork me on github
-#    share_url:
-#    share_title:
-#    share_link:
+  - icon:	github
+    url:	https://github.com/otzslayer
+    desc:	Github
+    share_url:
+    share_title:
+    share_link:
 
 #  - icon:	google-plus
 #    url:	https://google.com/???
