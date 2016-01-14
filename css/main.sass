@@ -4,17 +4,19 @@
 @import 'syntax-highlighting'
 @import 'table'
 @import 'bourbon/bourbon'
-@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css)
+@import url(https://fonts.googleapis.com/css?family=ABeeZee:400,400italic)
 @import url(https://fonts.googleapis.com/css?family=Oxygen:700,300,400)
 @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css)
+@import url(https://cdn.rawgit.com/openhiun/hangul/14c0f6faa2941116bb53001d6a7dcd5e82300c3f/nanumbarungothic.css)
 
 .cf
   @include clearfix
 
 $rs: 16px
 
-$font-serif: Oxygen, Noto Sans KR
-$font-sans: Oxygen, Open Sans, MundoSans, "Helvetica Neue", Arial, Helvetica, sans-serif
+$font-serif: ABeeZee, Nanum Barun Gothic ,Noto Sans KR
+$font-sans: ABeeZee, Open Sans, MundoSans, "Helvetica Neue", Arial, Helvetica, sans-serif
+$font-monospace: Monaco,Consolas,Lucida Console,monospace
 
 
 @mixin respond-to($breakpoint)
@@ -346,6 +348,7 @@ body
       text-overflow: ellipsis
   .post-content
     width: 100%
+    font-size: 12px
     font-family: $font-serif
     color: #333
     h1, h2, h3
@@ -354,27 +357,39 @@ body
       letter-spacing: -0.02em
       font-weight: 700
       font-style: normal
-      font-size: 24px
+      font-size: 28px
       line-height: 1.3
       margin: 0
       font-family: $font-sans
       margin-bottom: 4px
+      padding-top: 10px
+      padding-left: 15px
+    h4
+      font-size: 24px
+    h5
+      font-size: 20px
+    h6
+      font-size: 16px
     h2, h1
       letter-spacing: -0.02em
       font-weight: 700
       font-style: normal
-      font-size: 32px
+      font-size: 40px
       line-height: 1.2
       padding-top: 31px
       margin-bottom: 4px
+    h2
+      font-size: 32px
     p
       font-weight: 400
       font-style: normal
-      font-size: 22px
-      line-height: 30px
+      font-size: 12px
+      line-height: 25px
       margin: 0
-      padding-bottom: 30px
+      padding-left: 30px
+      padding-bottom: 5px
       color: #333
+      text-indent: 10px
       -webkit-hyphens: auto
       -moz-hyphens: auto
       hyphens: auto
@@ -382,15 +397,16 @@ body
       color: #333
       text-decoration: underline
     img
-      max-width: 100%
-      margin: 0 auto
+      max-width: 75%
+      margin: auto
     figure
-      margin: 0
-      padding: 0 0 30px
+      margin: 0 0 0 5
+      text-align: center
+      padding: 0 0 0 0
     figcaption
       font-weight: 400
       font-style: italic
-      font-size: 16px
+      font-size: 12px
       line-height: 1.3
       color: #666665
       outline: 0
@@ -405,10 +421,9 @@ body
       border: 0px solid #ddd
       border-top: 1px solid #ddd
     blockquote
-      margin: 0 0 30px
-      margin-left: -26px
+      margin: 0 0 5 5
+      margin-left: -2px
       border-left: 3px solid #57ad68
-      padding-left: 20px
       p
         letter-spacing: 0.01rem
         font-weight: 400
@@ -416,18 +431,18 @@ body
         mborder-left: 3px solid #57ad68
         mpadding-left: 20px
         mmargin-left: -26px
-        padding-bottom: 3px
     ul, ol
-      padding: 0 0 30px
+      padding: 0 0 10px
       margin: 0
+      padding-left : 30px
     li
       padding: 0
       font-weight: 400
       font-style: normal
-      font-size: 23px
-      line-height: 30px
+      font-size: 12px
+      line-height: 20px
       margin-left: 30px
-      margin-bottom: 12px
+      margin-bottom: 2px
       padding-top: 2px
       p
         padding: 0 0 golden-ratio(1rem,  1)
@@ -591,10 +606,13 @@ body
 
 pre,
 code
-  font-size: 15px
+  font-family: $font-monospace
+  font-size: 12px
+  font-weight: 700
   border: 1px solid #e8e8e8
   border-radius: 3px
   background-color: #eef
+  color: #17257a
 
 code
   padding: 1px 5px

@@ -1,0 +1,31 @@
+---
+layout: post
+title:  "[ISLR] Chapter 1. Introduction"
+categories: ISLR
+image: /assets/article_images/2016-01-14-chapter1/beginning.jpg
+---
+## <center><font color ="#005294">1 Introduction</font></center>
+
+---
+#### <font color = "#005294">An Overview of Statistical Learning</font>
+*통계적 학습(Statistical Learning)*은 데이터를 이해하기 위한 여러가지 도구의 집합을 의미한다. 이 도구들은 크게 *지도(supervised)*와 *자율(unsupervised)*로 나눌 수 있다.
+
+- 지도 학습(Supervised learning): 하나 이상의 input으로 output으로 예측값, 측정값을 가지는 통계 모델을 포함하고 있음
+- 자율 학습(Unsupervised learning): input은 있지만 예측값이나 측정값과 같은 output은 없지만, 데이터로부터 관계(relationships)나 구조를 알 수 있음
+
+본 책에서 다룰 데이터들은 다음과 같다.
+
+###### <font color = "#005294">*Wage Data*</font>
+
+책에서 다룰 `Wage` 데이터는 미국 중부 대서양 지역(Mid-Atlantic Region)의 노동자 3,000여명의 임금을 포함한 열두가지 정보를 담은 데이터다. 본 책에서는 특히 `wage`, `year`, `education` 간의 관계에 주목한다. Figure 1.1을 통해 각 변수 사이의 관계를 확인하도록 하자.
+
+![<font color = "#005294">Figure 1.1.</font> Wage data](/assets/islr/1.1.png)
+
+평균적으로, 임금은 60세가 될 때까지 증가하고, 그 이후부터 감소한다. 또한, 가운데 그래프를 통해 해가 지날 수록 평균 임금은 적게나마 꾸준히 오르고 있음을 확인할 수 있다. 마지막으로, 교육 수준과 임금이 정비례 관계임을 알 수 있다.
+
+###### <font color = "#005294">*Stock Market Data*</font>
+
+`Wage` 데이터는 *연속적(continuous)*이고 *양적(quantitative)*인 결과값(output value) 예측을 포함하고 있다. [^1] 하지만, 어떤 경우에는 숫자형이 아닌 *범주형(categorical)* 또는 *질적(qualitative)*인 결과를 예측해야 한다.
+
+
+[^1]: 이런 경우를 보통 *회귀(Regression)* 문제라고 한다.
