@@ -2,7 +2,7 @@
 layout: post
 title:  "[ISLR] Chapter 1. Introduction"
 categories: ISLR
-image: /assets/article_images/2017-01-16-chapter1/beginning.jpg
+image: /assets/article_images/2016-01-17-chapter1/beginning.jpg
 ---
 ## <center><font color ="#005294">1 Introduction</font></center>
 
