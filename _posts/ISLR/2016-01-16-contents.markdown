@@ -1,0 +1,34 @@
+---
+layout: post
+title:  "[ISLR] Contents"
+categories: ISLR
+image: /assets/article_images/2016-01-16-contents/contents.jpg
+---
+<center> ![An Introduction to Statistical Learning with Application in R, G. James et al.](/assets/images/cover_ISL.jpg)</center>
+
+---
+
+# <center>Contents</center>
+
+1. [Introduction](islr/chapter1/)
+
+2. Statistical Learning
+
+3. Linear Regression
+
+4. Classification
+
+5. Resampling Methods
+
+6. Linear Model Selection and Regularization
+
+7. Moving Beyond Linearity
+
+8. Tree-Based Method
+
+9. Support Vector Machines
+
+10. Unsupervised Learning
+
+
+**<div style="text-align:right"> Last Updated : Jan 16, 2016 </div>**

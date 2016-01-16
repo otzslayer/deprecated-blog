@@ -1,0 +1,56 @@
+---
+layout: post
+title:  "[ISLR] Chapter 1. Introduction"
+categories: ISLR
+image: /assets/article_images/2017-01-16-chapter1/beginning.jpg
+---
+## <center><font color ="#005294">1 Introduction</font></center>
+
+---
+#### <font color = "#005294">An Overview of Statistical Learning</font>
+*통계적 학습(Statistical Learning)*은 데이터를 이해하기 위한 여러가지 도구의 집합을 의미한다. 이 도구들은 크게 *지도(supervised)*와 *자율(unsupervised)*로 나눌 수 있다.
+
+- 지도 학습(Supervised learning): 하나 이상의 input으로 output으로 예측값, 측정값을 가지는 통계 모델을 포함하고 있음
+- 자율 학습(Unsupervised learning): input은 있지만 예측값이나 측정값과 같은 output은 없지만, 데이터로부터 관계(relationships)나 구조를 알 수 있음
+
+본 책에서 다룰 데이터들은 다음과 같다.
+
+###### <font color = "#005294">*Wage Data*</font>
+
+책에서 다룰 `Wage` 데이터는 미국 중부 대서양 지역(Mid-Atlantic Region)의 노동자 3,000여명의 임금을 포함한 열두가지 정보를 담은 데이터다. 본 책에서는 특히 `wage`, `year`, `education` 간의 관계에 주목한다. Figure 1.1을 통해 각 변수 사이의 관계를 확인하도록 하자.
+
+![<font color = "#005294">Figure 1.1.</font> Wage data](/assets/islr/1.1.png)
+
+평균적으로, 임금은 60세가 될 때까지 증가하고, 그 이후부터 감소한다. 또한, 가운데 그래프를 통해 해가 지날 수록 평균 임금은 적게나마 꾸준히 오르고 있음을 확인할 수 있다. 마지막으로, 교육 수준과 임금이 정비례 관계임을 알 수 있다.
+
+###### <font color = "#005294">*Stock Market Data*</font>
+
+`Wage` 데이터는 *연속적(continuous)*이고 *양적(quantitative)*인 결과값(output value) 예측을 포함하고 있다. [^1] 하지만, 어떤 경우에는 숫자형이 아닌 *범주형(categorical)* 또는 *질적(qualitative)*인 결과를 예측해야 한다. `Smarket` 데이터에는 2001년부터 2005년까지의 S&P 500 지수 자료가 담겨져 있다. 본 데이터 활용의 목적은 특정 날짜의 지수 증감을 이전 5일까지의 데이터를 토대로 예측하는 것이다. 다만 특징적인 것은 수치값을 예측하는 것이 아니라 주식 시장이 `Up` bucket일지, `Down` bucket일지를 예측하는 *분류(classification)* 문제라는 점이다.
+
+![<font color = "#005294">Figure 1.2.</font>](/assets/islr/1.2.png)
+![<font color = "#005294">Figure 1.3.</font>](/assets/islr/1.3.png)
+
+
+###### <font color = "#005294">*Gene Expression Data*</font>
+
+예를 들어, 수없이 많은 현 고객과 잠재 고객에 대한 인구학적 정보가 있다고 가정하자. 우리는 아마 관측된 특성에 따라 고객들을 묶어서 어떤 타입의 고객들이 서로 유사한가를 알고 싶을 것이다. 이것이 바로 *군집화(clustering)* 문제다. 이 예시에서는 결과물을 예측하지 않았다. 우리가 활용할 데이터셋은 `NCI60` 이다. 본 데이터는 64개의 암세포에서 6,830개의 유전 정보를 활용한다. 우리는 이 데이터로 어떤 결과를 예측하는 것이 아니라, 유전 정보를 기반으로 어떻게 그룹화되는지 알아볼 예정이다.
+본 데이터의 가장 큰 문제 중 하나는 '고차원의 데이터를 두 개의 변수로 어떻게 나타낼 수 있을 것인가'다. 본 책에서는 *주성분 분석(Principal Component Analysis, PCA)*를 활용한다. Figure 1.4를 참고하자.
+
+![<font color = "#005294">Figure 1.4.</font>](/assets/islr/1.4.png)
+
+#### <font color = "#005294">A Brief History of Statistical Learning</font>
+
+*통계적 학습(Statistical Learning)*이라는 용어는 다소 새로운 용어지만, 여러 분야에 걸쳐 오랜 기간 발전해왔다. 19세기 초에 르장드르(Adrien-Marie Legendre)[^2]와 가우스(Johann Carl Friedrich Gauß)[^3]는 *최소제곱법(method of least squares)*에 관한 저술을 하였는데, 이는 오늘날의 *선형 회귀법(linear regression)*의 초기 형태였다.
+이러한 접근법은 천문학 문제 해결에 훌륭한 해결법이 되었다. 선형 회귀법은 양적인 값을 예측하는데 사용된다. 질적인 값을 예측하는 기법은 피셔(Ronald Fisher)[^4]가 1936년에 제안한 *선형 판별 분석(linear discriminant analysis)*이 있다.
+1940년대에는 *로지스틱 회귀분석(logistic regression)*이, 1970년대 초에는 넬더(John Nelder)와 웨더번(Robert Wedderburn)이 기존의 선형 회귀법과 로지스틱 회귀법을 포함한 선형 모델의 확장인 *일반화 선형 모델(Generalized linear models, GLM)*이라는 용어를 만들었다.  
+1970년대 말에는 데이터로부터 학습할 수 있는 많은 기법이 나왔지만, 어디까지나 *선형*적인 방법 뿐이었다. *비선형(non-linear)*의 경우 계산이 어려웠기 때문이다.
+1980년대에 들어서는 컴퓨터 기술의 발달로 계산의 어려움이 해결되며 비선형 방법이 발전하기에 충분한 환경이 마련되었다. 1980년대 중반에는 브라이만(Leo Breiman), 프리드먼(Jerome Friedman), 올셴(R. A. Olshen), 스톤(Charles Stone)이 *분류 및 회귀 나무(Classification and Regression Trees, CART)*를 소개하며, 교차 검증법(cross-validation)을 활용해 모델을 선택하는 것이 중요함을 보여주었다.
+1986년, 헤스티(T. Hastie)와 티브시라니(R. Tibshirani)는 비선형 모델을 GLM으로 확장하며 *일반화 가법 모델(Generalized additive model)*이라는 용어를 만들었다.  
+이후 *기계 학습(machine learning)*을 포함한 여러 가지 방법들에 힘입어, 통계적 학습은 지도 학습 모델링과 자율 학습 모델링, 그리고 예측에 집중하는 하위 분야로 발전해나갔다.
+
+[^1]: 이런 경우를 보통 *회귀(Regression)* 문제라고 한다.
+[^2]: [아드리앵-마리 르장드르, 위키피디아](https://ko.wikipedia.org/wiki/%EC%95%84%EB%93%9C%EB%A6%AC%EC%95%B5%EB%A7%88%EB%A6%AC_%EB%A5%B4%EC%9E%A5%EB%93%9C%EB%A5%B4)
+[^3]: [칼 프리드리히 가우스, 위키피디아] (https://ko.wikipedia.org/wiki/%EC%B9%B4%EB%A5%BC_%ED%94%84%EB%A6%AC%EB%93%9C%EB%A6%AC%ED%9E%88_%EA%B0%80%EC%9A%B0%EC%8A%A4)
+[^4]: [로널드 피셔, 위키피디아](https://ko.wikipedia.org/wiki/%EB%A1%9C%EB%84%90%EB%93%9C_%ED%94%BC%EC%85%94)
+
+**<div style="text-align:right"> Last Updated : Jan 17, 2016 </div>**
