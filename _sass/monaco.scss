@@ -1,0 +1,12 @@
+/* 
+ * Monaco webfont
+ */
+@font-face {
+  font-family: 'Monaco2';
+  font-style: normal;
+  font-weight: 400;
+  src: url(/fonts/Monaco.eot);
+  src: url(/fonts/Monaco.eot?#iefix) format('embedded-opentype'),
+       url(/fonts/Monaco.woff) format('woff'),
+       url(/fonts/Monaco.ttf) format('truetype');
+}
