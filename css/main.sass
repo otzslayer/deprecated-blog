@@ -400,7 +400,7 @@ body
       color: #333
       text-decoration: underline
     img
-      max-width: 90%
+      max-width: 100%
       margin: 0 0 0 0
     figure
       margin: 0 0 0 5
@@ -451,6 +451,19 @@ body
       padding-top: 2px
       p
         padding: 5px
+      pre
+        margin-left: -30px
+        margin-right: 10px
+        margin-top: 0px
+        padding: 10px 10px
+        overflow-x: auto
+        border: 1px solid #e8e8e8
+        border-radius: 3px
+        background-color: #fdfdfd
+        > code
+          border: 0
+          padding-right: 0
+          padding-left: 0
     ol li
       list-style-type: decimal
   .bottom-teaser
@@ -614,19 +627,21 @@ code
   font-family: $font-monospace
   font-size: 13px
   font-weight: 700
-  color: #17257a
+  color: #080b38
+  line-height: 25px
 
 code
   padding: 1px 1px
 
 pre
-  margin-left: 40px
+  margin-left: 30px
   margin-right: 10px
+  margin-top: 0px
   padding: 10px 10px
-  overflow-x: scroll
+  overflow-x: auto
   border: 1px solid #e8e8e8
   border-radius: 3px
-  background-color: #eef
+  background-color: #fdfdfd
   > code
     border: 0
     padding-right: 0
