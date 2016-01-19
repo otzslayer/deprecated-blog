@@ -6,7 +6,7 @@ rmds <- "_Rmd"
 setwd(base)
 
 # 파일 이름 지정
-filename <- "2016-01-17-test.Rmd"
+filename <- "2016-01-18-R-graphics-cookbook-chapter-3.Rmd"
 
 # 폴더 경로들
 figs.path <- "assets/article_images/"

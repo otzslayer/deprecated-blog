@@ -1,0 +1,87 @@
+---
+layout: post
+title:  ".RProfile 파일로 원하는 환경 만들기"
+categories: R
+image: /assets/article_images/2016-01-19-rprofile/programming.jpg
+---
+
+#### <center> .RProfile </center>
+
+---
+
+어떤 작업을 하던간, 자주 사용하는 기능은 단축키로 지정하고 싶고, 원하는 옵션은 프로그램이 시작함과 동시에 설정되게 하는 것이 가장 편하다.
+R을 사용하면서도 똑같은 고민을 했다.
+아무것도 몰랐을 때에는 R Studio를 켜자마자 원하는 패키지를 불러오고, 나중에는 스크립트 파일에 저장해서 꾸역꾸역 편하게 사용하려고 했다.
+특히 문제가 되었던건 그래프와 PDF 내보내기에서의 한글 출력이었다.
+맥을 쓰게 되면서 플롯에서의 한글 인코딩은 항상 문제가 되었고, 해결책이 `par()` 이라는걸 알게 되었음에도 불구하고 귀찮음은 더해지기만 했다.
+그러던 중, 전희원님의 블로그를 둘러보다가 `.RProfile`에 대한 [내용](http://freesearch.pe.kr/archives/4446)을 보게 되었다.
+원하던 내용이었다. `ggplot`의 테마도 바꿀 수 있었고, 여러 가지 패키지를 R 세션이 시작함과 동시에 불러올 수 있었다. 
+fivethirtyeight의 시각화 테마를 좋아하던 내게는 약간의 수정을 통해 원하는 `ggplot` 테마를 얻을 수 있었다.
+이 뿐만 아니라, `.RProfile` 파일을 통해 R 마크다운 파일로 필요한 파일들을 generating하는 함수도 만들어서 바로 사용할 수 있게 해놨다.
+현재 본인이 쓰고 있는 `.RProfile` 내용을 공유한다.
+
+{% highlight r %}
+suppressPackageStartupMessages({
+	library(ggplot2)
+	library(ggthemes)
+	library(extrafont) # 원하는 폰트를 사용하기 위해서 불러온다.
+	library(graphics)
+	library(grDevices)
+	library(gcookbook)
+	library(knitr)
+	library(dplyr)
+	library(reshape2)
+	library(tidyr)
+})
+
+# KoPubDotum Bold는 무료로 다운로드할 수 있는 폰트다.
+theme_han<- function(base_size = 12, base_family = "KoPubDotum Bold"){
+	(theme_foundation(base_size = base_size, base_family = base_family) +
+		theme(line = element_line(colour = "black"), rect = element_rect(fill = ggthemes_data$fivethirtyeight["ltgray"],
+			linetype = 0, colour = NA), text = element_text(colour = ggthemes_data$fivethirtyeight["dkgray"]),
+            axis.title = element_text(), axis.text = element_text(),
+            axis.ticks = element_blank(), axis.line = element_blank(),
+	  	    axis.title.x = element_text(margin = margin(t = 12, b = 5), size = 14),
+  		    axis.title.y = element_text(angle = 90, margin = margin(r = 12, l = 5), size = 14),
+            legend.background = element_rect(), legend.position = "bottom",
+            legend.direction = "horizontal", legend.box = "vertical",
+            panel.grid = element_line(colour = NULL), panel.grid.major = element_line(colour = ggthemes_data$fivethirtyeight["medgray"]),
+            panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0,
+				size = rel(1.5), face = "bold"), plot.margin = grid::unit(c(1, 1, 0.5, 0.5), "lines"),
+			background = element_rect(), panel.margin.x=NULL, panel.margin.y=NULL))
+}
+
+markdown <- function(filename, postpath){
+	# jekyll 블로그 디렉토리 설정
+	base <- "/Users/Han/otzslayer.github.io/"
+
+	# Rmd파일이 저장될 디렉토리 지정
+	rmds <- "_Rmd"
+	setwd(base)
+
+	# 폴더 경로들
+	figs.path <- "assets/article_images/"
+	posts.path <- paste0("_posts/", postpath)
+
+	# START!!!
+	render_jekyll(highlight = "pygments")
+	opts_knit$set(base.url="/")
+	file <- paste0(rmds, "/", filename)
+
+	# 파일 경로 설정
+	fig.path <- paste0(figs.path, sub(".Rmd$", "", basename(file)), "/")
+	opts_chunk$set(fig.path = fig.path)
+
+	# suppress messages
+	opts_chunk$set(cache = F, warning = F, message = F, cache.path = "_cache/", tidy = F)
+
+	out.file <- basename(knit(file))
+	file.rename(out.file, paste0(posts.path, out.file))
+
+}
+
+par(family = "KoPubDotum Bold")
+graphics.off() # 이 코드가 없으면 그래픽 창이 하나 떠서 삽입함
+grDevices::pdf.options(family = 'KoPubDotum Bold')
+theme_set(theme_han())
+{% endhighlight %}
