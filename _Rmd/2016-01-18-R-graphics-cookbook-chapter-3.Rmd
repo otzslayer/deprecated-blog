@@ -53,3 +53,30 @@ ggplot(pg_mean, aes(x = group, y = weight)) +
 ```
 
 ###### 3.2 막대를 함께 묶기
+
+이번 예시에서 쓸 `cabbage_exp` 데이터는 다음과 같다.
+```{r}
+cabbage_exp
+```
+`Date`를 x 위치에 두고, `Cultivar`로 색상을 구분할 때, 다음의 코드를 실행시킨다.
+
+```{r}
+ggplot(cabbage_exp, aes(x = Date, y = Weight, fill = Cultivar)) + 
+	geom_bar(position = "dodge", stat = "identity")
+	
+# 색을 바꿔주고 막대에 테두리를 주고 싶다면 다음과 같다.
+ggplot(cabbage_exp, aes(x = Date, y = Weight, fill = Cultivar)) + 
+	geom_bar(position = "dodge", stat = "identity", colour = "black") +
+	scale_fill_brewer(palette = "Pastel1")
+```
+
+주의해야할 점 중 하나는, 만약 데이터에서 해당하는 요소가 사라진다면 주변에 있는 막대가 빈 위치를 채운다는 것이다. 예를 들어, `Cultivar == "c52"` 이고, `Date == "d21"`인 데이터가 사라진다면 결과는 다음과 같다.
+
+```{r}
+ce <- cabbage_exp[1:5, ]
+ce
+
+ggplot(ce, aes(x = Date, y = Weight, fill = Cultivar)) + 
+	geom_bar(position = "dodge", stat = "identity", colour = "black") +
+	scale_fill_brewer(palette = "Pastel1")
+```
