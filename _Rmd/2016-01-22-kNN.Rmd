@@ -1,0 +1,394 @@
+---
+layout: post
+title:  "kNN 알고리즘"
+categories: Machine-Learning
+date: 2016-01-22
+image: https://upload.wikimedia.org/wikipedia/commons/5/52/Map1NN.png
+---
+
+## K Nearest Neighbor
+
+---
+
+#### K Nearest Neighbor Algorithm(kNN 알고리즘, k 최근접 이웃 알고리즘)  
+
+분류 분석(Classification)은 지도 학습(Supervised Learning) 중 하나로, 데이터가 어떤 카테고리에 속할 지 예측하는 기법이다. 그 중에서 kNN 알고리즘은 어떤 데이터에 대해 근접해 있는 $k$ 개의 데이터를 기반으로 해당 데이터를 분류하는 알고리즘이다. kNN 알고리즘은 매우 단순하지만 실용적이고, 다음과 같은 영역에서 사용된 바 있다.
+
+- 안면 인식 및 글자 인식 등의 컴퓨터 비전 분야
+- 개인화된 추천
+- 특정 단백질이나 질병을 추출하는 데 사용되는 유전자 데이터의 패턴 식별
+
+다음의 이미지가 kNN 알고리즘을 잘 나타내고 있다.
+
+![kNN Algorithm, IBM](http://www-01.ibm.com/support/knowledgecenter/api/content/nl/ko/SSLVMB_21.0.0/com.ibm.spss.statistics.help/images/out_knn_overview.gif)
+
+두 이미지는 kNN 알고리즘의 예제이다. 첫 번째 이미지는 $k = 5$ 인 경우인데, 가장 가까운 다섯 개의 데이터를 기반으로 해당 데이터를 분류한다. 이 경우, 파란색 세 개, 회색 두 개이므로 해당 데이터는 파란색으로 분류된다. 하지만 $k$가 달라진다면 해당 데이터는 다른 결과를 얻을 수 있다.
+오른쪽 이미지는 $k = 9$인 경우다. 파란색 세 개, 회색 여섯 개이므로 해당 데이터는 회색으로 분류된다.[^1]
+위 이미지에서 보듯이 kNN 알고리즘은 이해하기 쉬운 알고리즘이지만, $k$ 값에 굉장히 민감함을 알 수 있다.
+최적의 $k$ 값을 선택하는 것은 굉장히 데이터에 의존적이다. 또한 닫힌 형태(Closed form)로 식이 존재하기보다는 보통 선험적(heuristic)으로 $k$ 값을 선택하게 된다. 이 때, $k$ 값이 너무 작거나 큰 경우 다음과 같은 문제가 발생한다.
+
+- $k$ 값이 매우 작을 때 : 일반적으로 $k = 1$ 로, 1NN인 경우다. 이 경우 모델이 과적합(overfitting)[^2]이 될 가능성이 존재한다.
+- $k$ 값이 매우 클 때 : 데이터의 구조를 파악하기 어려워진다. 쉽게 말해서, 기존에 더 많이 분류되어 있는 쪽으로 편향된다.
+
+가장 고전적이지만, 손쉽게 $k$ 값을 선택할 수 있는 방법은 어림잡기(Rule of Thumb)다. 이 법칙은 데이터 전체 개수를 $n$이라고 할 때, $k = \sqrt{n}$로 둔다. 이 방법이 최선의 방법인지는 실제 알고리즘을 실행한 후에야 알 수 있을 것이다.
+
+---
+
+다음의 이미지를 통해 kNN 알고리즘을 살펴보도록 하자.
+
+![kNN Algorithm](https://raw.githubusercontent.com/otzslayer/KHURStudy/master/Machine%20Learning/images/kNN_ex1.jpg) 
+
+토마토를 중심으로 각 데이터들의 거리를 구해서 가까운 $k$ 개의 데이터를 기반으로 토마토를 분류한다. 위 이미지에서 $k = 4$로 정의한다면, 토마토는 과일로 분류된다. 이처럼 거리를 구할 때는 여러 가지 척도가 사용될 수 있다. 그 중에서 가장 보편적으로 사용되는 것이 *유클리드 거리(Euclidean distance)*이다. 유클리드 거리는 가장 짧은 일직선의 경로값을 의미한다. 수식으론 다음과 같다.
+$$
+d_e(p, q) = \sqrt{(p_1 - q_1)^2 + (p_2 - q_2)^2 + \cdots + (p_n - q_n)^2 }
+$$
+
+또한 많이 쓰이는 거리 개념으로는 *맨해튼 거리(Manhattan distance)*가 있다. 수식으론 다음과 같다.
+
+$$
+d_m(p, q) = \left\lVert p - q \right\rVert_1 = \sum^n_{i = 1} |p_i - q_i|
+$$
+
+식에서 알 수 있듯이, 각 좌표 사이의 절대값을 모두 더한 값이다. 유클리드 거리와 맨해튼 거리의 비교는 다음의 이미지로 대체한다.
+
+![Difference between Euclidean distance and Manhattan distance](https://upload.wikimedia.org/wikipedia/commons/0/08/Manhattan_distance.svg)
+
+이외에도 코사인 유사도(Cosine similarity), 피어슨 상관계수(Pearson correaltion) 등이 사용된다. 본 실습에서는 간단하게 유클리드 거리를 사용하도록 한다. 다른 거리 개념에 대해서는 추후에 다시 다루도록 한다.
+
+---
+
+kNN 알고리즘은 대표적인 게으른 학습(lazy learning)이다. 여기서 게으른 학습의 반대는 열정적인 학습(eager learning)이다. 두 학습을 비교하자면 다음과 같다.
+
+- 게으른 학습(lazy learning) : 학습 데이터(training data)를 단순하게 저장하고 테스트 데이터(test data)가 올 때까지 기다렸다가 데이터가 input되면 그 때 모델을 실행하는 경우. 학습 시간보다 예측 시간이 더 걸린다.
+- 열정적인 학습(eager learning) : 학습 데이터가 주어지면 테스트 데이터가 input되기 전부터 바로 모델을 생성하는 경우. 
+
+kNN 알고리즘의 장단점을 비교하면 다음과 같다.
+
+<center>
+
+|    장점     |   단점       |
+|-------------------------------------------|-------------------------------------------|
+|  - 단순하며 효율적이다.   <br> - 데이터 분산에 대한 추정을 만들 필요가 없다. <br> - 훈련 단계가 빠르다.    |  -        특별한 모델을 생성하지 않는다. <br> - 느린 분류 단계 <br> - 많은 메모리가 필요하다. <br> - 명목형 데이터와 결측치에 대해서는 추가적인 처리가 필요하다. |
+
+</center>
+
+---
+
+#### 실습 1 : 유방암 진찰
+
+##### 1단계. 데이터 수집
+
+실습할 데이터는 [UCI 기계 학습 저장소](http://archive.ics.uci.edu/ml/)에서 'Breast Cancer Wisconsin Diagnostic' 데이터셋이다. 디지털화된 유방 덩어리 미세 침흡인물의 이미지로부터의 측정치가 포함되어 있다. 
+우선 데이터를 로드하도록 하자.
+
+##### 2단계. 데이터 준비와 탐구
+
+```{r}
+wbcd <- read.csv("https://raw.githubusercontent.com/otzslayer/KHURStudy/master/Machine%20Learning/data/wisc_bc_data.csv", header = TRUE, stringsAsFactors = FALSE)
+
+# 첫 여섯 개의 데이터를 살펴보자.
+head(wbcd)
+
+# 데이터 전체 구조 확인
+str(wbcd)
+```
+
+살펴본 바로는 569명의 환자들의 데이터가 존재하고, 유방암 진단 결과(`diagnosis`), 세포핵의 반지름(`radius`), 텍스쳐(`texture`), 둘레(`perimeter`), 면적(`area`), 평활도(`smoothness`), 다짐도(`compactness`), 요면(`concavity`), 요면점(`points`), 대칭(`symmetry`), 프랙탈 차원(`dimension`) 등의 데이터가 포함되어 있다.
+이 때 `id`는 환자 식별자로 유방암 진찰 분류를 하는데에 필요가 없기 때문에 버리도록 한다.
+
+```{r}
+wbcd <- wbcd[-1]
+```
+
+예상하고자 하는 결과는 `diagnosis` 변수에 포함되어 있으므로, `table()` 함수를 이용해 살펴보자.
+
+```{r}
+table(wbcd$diagnosis)
+```
+
+양성인 경우 357개, 음성인 경우 212개임을 알 수 있다.
+하지만 테이블의 레이블이 `B`와 `M`으로 나타나있어, 어떤 의미를 갖는지 확실히 알 수 없다. 
+각각은 양성(Benign), 음성(Malignant)을 나타내므로, `factor()` 함수를 이용해서 레이블을 붙여주도록 하자.
+
+```{r}
+wbcd$diagnosis <- factor(wbcd$diagnosis, levels = c("B", "M"),
+                         labels = c("Benign", "Malignant"))
+```
+
+이번엔 결과를 비율로 보도록 하자.
+
+```{r}
+round(prop.table(table(wbcd$diagnosis)) * 100, digits = 1)
+```
+
+나머지 변수들은 모두 수치이며, 위에서 언급한 10개 특성이 각각 다른 방식으로 수치화되어 있다.
+그 중에서 반지름, 면적, 평활도를 자세히 들여다보도록 하자.
+
+```{r}
+summary(wbcd[c("radius_mean", "area_mean", "smoothness_mean")])
+
+# Boxplot을 그린다.
+qplot(radius_mean, radius_mean, data = wbcd, geom = "boxplot", xlab = "",
+      ylab = "세포핵 반지름의 평균")
+qplot(area_mean, area_mean, data = wbcd, geom = "boxplot", xlab = "",
+      ylab = "세포핵 면적의 평균")
+qplot(smoothness_mean, smoothness_mean, data = wbcd, geom = "boxplot",
+      xlab = "", ylab = "세포핵 평활도의 평균")
+```
+상자그림(boxplot)을 통해 각 데이터가 어떤 분포를 가지고 있는지, 이상치(outlier)가 얼마나 있는지 확인할 수 있다.
+또한 측정 범위가 매우 다르기 때문에 이를 정규 범위로 재조정하기 위해 *정규화(Normalization)* 과정을 거쳐야 한다.
+
+```{r}
+normalize <- function(x) {
+        return ((x - min(x)) / (max(x) - min(x)))
+}
+```
+
+위와 같이 정규화 함수를 만들고, 수치적인 데이터를 모두 정규화시켜주기 위해, `lapply()` 함수를 이용해 일괄적으로 데이터를 정규화하도록 한다.
+이 때 `laaply()`는 결과값이 list로 반환되기 때문에 data frame으로 변환시켜주기 위해 `as.data.frame()`을 이용한다.
+
+```{r}
+wbcd_n <- as.data.frame(lapply(wbcd[2:31], normalize))
+summary(wbcd_n)
+```
+
+다시 주어진 데이터를 학습 데이터와 테스트 데이터로 나눠주어야 한다. 현재 가지고 있는 데이터는 테스트 데이터가 없다. 따라서 데이터를 나눠서 테스트 데이터를 만들어줘야 하는데, 아까 앞에서 데이터 구조를 확인할 때, `id`가 임의로 주어져 있음을 확인했다. 따라서 데이터를 슬라이스(slice)해도 일반성에 문제가 없다.
+
+```{r}
+wbcd_train <- wbcd_n[1:469, ]
+wbcd_test <- wbcd_n[470:569, ]
+
+# 만들어놓은 데이터에 대하여 각각 레이블을 저장해놓는다.
+wbcd_train_labels <- wbcd[1:469, 1]
+wbcd_test_labels <- wbcd[470:569, 1]
+```
+
+##### 3단계. 데이터에 적용해 모델 훈련
+
+kNN 알고리즘을 사용하기 위해 `class` 패키지를 불러온다. `class` 패키지는 가장 고전적이고 표준적인 kNN 알고리즘을 제공한다.
+
+```{r}
+library(class)
+
+# knn() 함수의 사용법 확인
+?knn
+
+# knn(train, test, class, k)
+```
+
+`train`은 학습 데이터를, `test`는 테스트 데이터를, `class`는 학습 데이터를 분류하는 팩터 벡터를, `k`에는 kNN 알고리즘에서 최근접 이웃의 갯수 $k$를 의미한다.
+우리가 가지고 있는 학습 데이터는 `wbcd_train` 이고 테스트 데이터는 `wbcd_test`, 팩터 벡터는 `wbcd_train_labels`이고, $k$ 값은 학습 데이터 수의 제곱근의 근사치인 21로 둔다. 여기서 알아두어야 할 점은 본 데이터와 같이 분류가 바이너리(binary)한 경우, $k$를 홀수로 잡아주는 것이 좋다. 짝수로 둘 경우, 동률이 발생할 수 있기 때문이다. 코드는 다음과 같다.
+
+```{r}
+wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+                      cl = wbcd_train_labels, k = 21)
+```
+
+##### 4단계. 모델 성능 평가
+
+우리는 kNN 알고리즘을 이용해 `wbcd_test_pred` 라는 예측값을 얻어냈다. 이제 이 결과물이 얼마나 성능이 좋은지 확인하는 일만 남았다. 원래 가지고 있던 `wbcd_test_labels`과 비교를 해야 한다. 이를 편하게 하기 위해 교차표(Cross table)을 사용한다. 이를 위해 `gmodels` 패키지를 불러온다.
+
+```{r}
+library(gmodels)
+CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+```
+
+교차표를 확인하면 크게 네 개의 셀로 구분된다. 왼쪽 위부터 시계 방향으로 TP(True Positive), FP(False Positive), TN(True Negative), FN(False Negative) 으로 부르도록 하자. TP은 실제도 양성이었는데, 알고리즘의 결과도 양성인 경우다. 이처럼 FP는 실제로는 양성이지만 알고리즘의 결과가 음성인 경우, TN는 실제도 음성이었고 결과도 음성인 경우, 마지막으로 FN은 실제로는 음성이지만 결과가 양성인 경우다.
+이를 평가하기 위해 다음의 세 개의 척도(measure)를 소개한다. 각각 *정밀도(Precision)*, *재현율(Recall)*, *정확도(Accuracy)*이다.[^3]
+
+$$ \text{Precision} = \frac{TP}{TP + FP} $$
+$$ \text{Recall} = \frac{TP}{TP + FN} $$
+$$ \text{Accuracy} = \frac{TP + TN}{TP + FP + TN + FN} $$
+
+위의 척도를 사용하면 정밀도 100%, 재현율 96.8%, 정확도 98%이다. 다시 말해서 100개의 케이스 중, 두 개의 케이스가 오분류되었다. 굉장히 인상적인 결과지만, 모델 성능을 높이기 위해 다른 시도를 해보도록 하자.
+
+##### 5단계. 모델 성능 높이기
+
+kNN 알고리즘에서 데이터를 정규화하는 경우는 굉장히 많지만, 항상 옳은 방법은 아니다. 모든 데이터를 0부터 1까지로 압축하기 때문이다. 최댓값과 최솟값을 정해놓기 때문에 극단값이 중심을 향한다. 이런 경우 대안으로 *z 표준화*를 할 수 있다. 데이터의 평균 $\mu$, 표준편차 $\sigma$에 대하여
+$$ Z = \frac{x - \mu}{\sigma} $$
+로 나타낼 수 있다.
+z-표준화를 할 경우, 각 데이터들이 평균에서 먼 정도를 표준편차를 기준으로 나타내는데, 이상치에 대해 더 나은 결과를 보여줄 수 있다. R에서는 기본 함수인 `scale()`을 이용해서 표준화할 수 있다.
+
+```{r}
+wbcd_z <- as.data.frame(scale(wbcd[-1]))
+summary(wbcd_z)
+```
+
+표준화한 데이터를 다시 학습 데이터와 트레이닝 데이터로 나누고 kNN 알고리즘을 실행한 후 결과를 보도록 하자.
+
+```{r}
+wbcd_train <- wbcd_z[1:469, ]
+wbcd_test <- wbcd_z[470:569, ]
+wbcd_train_labels <- wbcd[1:469, 1]
+wbcd_test_labels <- wbcd[470:569, 1]
+wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+                      cl = wbcd_train_labels, k = 21)
+CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+```
+
+정밀도는 100%로 같지만, 재현율이 92.4%로 떨어지고 정확도도 95%로 떨어졌다. z-표준화를 이용하더라도 모델의 성능을 더 높이는 것은 힘들다는 결과를 얻을 수 있다.
+
+추가적으로 $k$ 값에 따라 정밀도, 재현율, 정확도가 모두 다른 것을 밑의 코드에서 확인할 수 있다.
+
+```{r}
+wbcd_train <- wbcd_n[1:469, ]
+wbcd_test <- wbcd_n[470:569, ]
+wbcd_train_labels <- wbcd[1:469, 1]
+wbcd_test_labels <- wbcd[470:569, 1]
+
+# k = 1
+wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+                      cl = wbcd_train_labels, k = 1)
+CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+
+# k = 5
+wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+                      cl = wbcd_train_labels, k = 5)
+CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+
+# k = 11
+wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+                      cl = wbcd_train_labels, k = 11)
+CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+
+# k = 15
+wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+                      cl = wbcd_train_labels, k = 15)
+CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+
+# k = 27
+wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+                      cl = wbcd_train_labels, k = 27)
+CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+```
+
+---
+
+#### 실습 2 : 당뇨병 데이터
+
+
+##### 1. 데이터 수집
+
+실습할 데이터는 `MASS` 패키지에 포함되어 있는 `Pima.tr` 데이터다. `MASS` 패키지에는 실습을 위한 학습 데이터와 테스트 데이터가 모두 존재하는데, `Pima.tr` 데이터는 그 중에서 학습 데이터다. 본 데이터는 애리조나 피닉스 지역의 피마 인디언들의 당뇨병을 WHO 기준으로 기록한 데이터다.
+
+##### 2. 데이터 탐구
+
+학습 데이터와 테스트 데이터를 합쳐서 532명의 데이터가 존재하고, 총 여덟 개의 변수를 포함하고 있다. 각 변수에 대한 설명은 다음과 같다.
+
+<center>
+
+| 변수명    | 설명 |
+|-----------|---------------------------|
+| `npreg`   | 임신 횟수                                 |
+| `glu`     | 글루코스 부하 검사 결과[^4]               |
+| `bp`      | 확장기 혈압[^5]                           |
+| `skin`    | 삼두근 피부 주름 두께[^6]                 |
+| `bmi`     | BMI 수치 (몸무게 / 키^2)                  |
+| `ped`     | 가족력을 기반으로 당뇨병이 생길 확률[^7]  |
+| `age`     | 나이                                      |
+| `type`    | 당뇨병 여부                               |
+
+</center>
+
+만약을 위해 기존의 데이터들을 합쳐서 다시 샘플링하여 학습 데이터와 테스트 데이터를 새로 생성하도록 한다.
+우선 데이터를 합치고 데이터의 분포나 내부 구조를 들여다보자.
+
+```{r}
+library(MASS)
+
+pima <- rbind(Pima.tr, Pima.te)
+str(pima)
+```
+
+탐색적 데이터 분석을 위해 `reshape2` 패키지의 `melt()` 함수를 이용해 데이터의 형태를 바꿔준다. 바꾼 데이터를 각각의 변수를 기준으로 상자그림(boxplot)을 그려준다.
+
+```{r}
+library(reshape2)
+library(ggplot2)
+pima.melt <- melt(pima, id.var = "type")
+ggplot(data = pima.melt, aes(x = type, y = value)) +
+    geom_boxplot() + facet_wrap(~variable, ncol = 2)
+```
+
+상자그림을 보면 실습 1과 같이 모든 데이터의 측정 범위가 상이하다. 따라서 표준화를 해주는데, 이번에는 z-표준화를 이용하도록 하자.
+표준화 후, 위의 과정을 다시 한 번 진행한다.
+
+```{r}
+pima.scale <- as.data.frame(scale(pima[, -8]))
+str(pima.scale)
+pima.scale$type = pima$type
+
+pima.scale.melt <- melt(pima.scale, id.var = "type")
+ggplot(data = pima.scale.melt, aes(x = type, y = value)) +
+    geom_boxplot() + facet_wrap(~variable, ncol = 2)
+```
+
+각 변수에 대하여 kNN 알고리즘의 경우 서로 간의 상관도가 모델링에 있어 문제가 없지만, 선형 회귀법 등의 방법에서는 문제가 될 수 있으므로 확인하는 습관을 갖도록 하자.
+
+```{r}
+cor(pima.scale[, -8])
+```
+
+상관계수를 확인하면 임신 횟수와 나이, 삼두근 피부 주름 두께와 bmi 가 제법 강한 양의 상관관계를 보여주고 있다.
+
+이제 표준화한 데이터를 학습 데이터와 테스트 데이터로 나눈다. 실습 1과는 다르게 샘플링해서 분리하도록 하자. 이 때의 비율은 7:3으로 하도록 한다.
+
+##### 3. 데이터 샘플링
+
+```{r}
+set.seed(502)
+
+index <- sample(2, nrow(pima.scale), replace = TRUE, prob = c(0.7, 0.3))
+train <- pima.scale[index == 1, ]
+test <- pima.scale[index == 2, ]
+str(train)
+str(test)
+```
+
+##### 4. kNN 알고리즘에서 최적의 k 값 찾기
+
+kNN 알고리즘의 적절한 $k$ 값을 찾기 위해 다음의 과정을 거친다. 우선 $k = 2$ 부터 $k = 20$ 까지의 모든 경우를 테스트 하기 위해 `expand.grid()` 함수를 이용해 하나의 데이터 프레임을 만들어준다. 그 후, 학습 데이터를 제어하는 함수인 `trainControl()` 함수를 사용하는데, `caret` 패키지를 불러와야 사용 가능하다.
+
+```{r}
+library(caret)
+grid1 <- expand.grid(.k = seq(2, 20, by = 1))
+control <- trainControl(method = "cv")
+```
+
+설정은 끝났고, 최적의 $k$ 값만 찾는 일만 남았다.
+
+```{r}
+library(e1071)
+set.seed(247)
+knn.train <- train(type~., data = train, method = "knn", 
+                   trControl = control, tuneGrid = grid1)
+knn.train
+```
+
+최적의 $k$ 값은 15로 나왔다. 최적의 $k$ 값은 정확도와 *카파 계수(Cohen's Kappa coefficient)*를 통해서 얻어진다. 카파 계수에 대한 내용은 [위키피디아 문서](https://en.wikipedia.org/wiki/Cohen%27s_kappa)를 확인하자.
+최적의 $k$ 값을 이용해 kNN 알고리즘을 실행하면 다음의 결과를 얻을 수 있다.
+
+##### 5. 모델 성능 평가
+
+```{r}
+knn.test <- knn(train[, -8], test[, -8], train[, 8], k = 15)
+CrossTable(x = test[, 8], y = knn.test, prop.chisq = FALSE)
+```
+
+kNN 알고리즘 모델의 정밀도는 81.7%, 재현율은 73.8%, 정확도는 70.0%이다.
+
+---
+
+#### Reference
+1. Lanz, Brett. *Machine Learning with R, 2nd Edition*. PACKT, 2015
+2. http://www.analyticsvidhya.com/blog/2014/10/introduction-k-neighbours-algorithm-clustering/
+2. http://www.analyticsvidhya.com/blog/2015/08/learning-concept-knn-algorithms-programming/
+3. https://www.datacamp.com/community/tutorials/machine-learning-in-r
+
+[^1]: 일반적으로 명목형 데이터를 다루지만, 수치형 데이터의 경우 $k$개 데이터의 평균을 이용해 데이터를 분류한다.
+[^2]: 과적합이란 주어진 데이터로부터 보장되는 것 이상으로 모델을 만들 때 발생한다. 다시 말해서, 데이터 자체에 너무 충실한 나머지, 일반적인 구조를 표현하지 못하는 상황을 말한다. 만약 다른 데이터가 모델에 input으로써 들어올 때, 모델이 그 변화에 굉장히 민감해진다.
+[^3]: FP와 FN을 각각 제 1종 오류, 제 2종 오류라고 한다.
+[^4]: http://terms.naver.com/entry.nhn?docId=488146&cid=55558&categoryId=55558
+[^5]: http://terms.naver.com/entry.nhn?docId=484340&cid=50364&categoryId=50364
+[^6]: 피하지방 저장량의 크기를 추정할 수 있다. 환자의 영양 상태를 확인할 때 자주 사용한다.
+[^7]: http://www.personal.kent.edu/~mshanker/personal/Zip_files/sar_2000.pdf
