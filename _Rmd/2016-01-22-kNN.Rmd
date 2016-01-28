@@ -380,7 +380,7 @@ knn.train
 
 ```{r}
 knn.test <- knn(train[, -8], test[, -8], train[, 8], k = 15)
-CrossTable(x = knn.text, y = test[, 8],
+CrossTable(x = knn.test, y = test[, 8],
            prop.chisq = FALSE, dnn = c('predicted', 'actual'))
 ```
 
