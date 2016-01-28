@@ -29,9 +29,6 @@ suppressPackageStartupMessages({
 	library(grDevices)
 	library(gcookbook)
 	library(knitr)
-	library(dplyr)
-	library(reshape2)
-	library(tidyr)
 })
 
 # KoPubDotum Bold는 무료로 다운로드할 수 있는 폰트다.

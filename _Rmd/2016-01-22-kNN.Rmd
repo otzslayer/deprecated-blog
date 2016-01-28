@@ -191,7 +191,8 @@ wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
 
 ```{r}
 library(gmodels)
-CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+CrossTable(x = wbcd_test_pred, y = wbcd_test_labels,
+           prop.chisq = FALSE, dnn = c('predicted', 'actual'))
 ```
 
 교차표를 확인하면 크게 네 개의 셀로 구분된다. 왼쪽 위부터 시계 방향으로 TP(True Positive), FP(False Positive), TN(True Negative), FN(False Negative) 으로 부르도록 하자. TP은 실제도 양성이었는데, 알고리즘의 결과도 양성인 경우다. 이처럼 FP는 실제로는 양성이지만 알고리즘의 결과가 음성인 경우, TN는 실제도 음성이었고 결과도 음성인 경우, 마지막으로 FN은 실제로는 음성이지만 결과가 양성인 경우다.
@@ -201,7 +202,7 @@ $$ \text{Precision} = \frac{TP}{TP + FP} $$
 $$ \text{Recall} = \frac{TP}{TP + FN} $$
 $$ \text{Accuracy} = \frac{TP + TN}{TP + FP + TN + FN} $$
 
-위의 척도를 사용하면 정밀도 100%, 재현율 96.8%, 정확도 98%이다. 다시 말해서 100개의 케이스 중, 두 개의 케이스가 오분류되었다. 굉장히 인상적인 결과지만, 모델 성능을 높이기 위해 다른 시도를 해보도록 하자.
+위의 척도를 사용하면 정밀도 96.8%, 재현율 100%, 정확도 98%이다. 다시 말해서 100개의 케이스 중, 두 개의 케이스가 오분류되었다. 굉장히 인상적인 결과지만, 모델 성능을 높이기 위해 다른 시도를 해보도록 하자.
 
 ##### 5단계. 모델 성능 높이기
 
@@ -224,10 +225,11 @@ wbcd_train_labels <- wbcd[1:469, 1]
 wbcd_test_labels <- wbcd[470:569, 1]
 wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
                       cl = wbcd_train_labels, k = 21)
-CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+CrossTable(x = wbcd_test_pred, y = wbcd_test_labels,
+           prop.chisq = FALSE, dnn = c('predicted', 'actual'))
 ```
 
-정밀도는 100%로 같지만, 재현율이 92.4%로 떨어지고 정확도도 95%로 떨어졌다. z-표준화를 이용하더라도 모델의 성능을 더 높이는 것은 힘들다는 결과를 얻을 수 있다.
+재현율은 92.4%로 같지만, 정밀도가 100%%로 떨어지고 정확도도 95%로 떨어졌다. z-표준화를 이용하더라도 모델의 성능을 더 높이는 것은 힘들다는 결과를 얻을 수 있다.
 
 추가적으로 $k$ 값에 따라 정밀도, 재현율, 정확도가 모두 다른 것을 밑의 코드에서 확인할 수 있다.
 
@@ -240,27 +242,32 @@ wbcd_test_labels <- wbcd[470:569, 1]
 # k = 1
 wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
                       cl = wbcd_train_labels, k = 1)
-CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+CrossTable(x = wbcd_test_pred, y = wbcd_test_labels,
+           prop.chisq = FALSE, dnn = c('predicted', 'actual'))
 
 # k = 5
 wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
                       cl = wbcd_train_labels, k = 5)
-CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+CrossTable(x = wbcd_test_pred, y = wbcd_test_labels,
+           prop.chisq = FALSE, dnn = c('predicted', 'actual'))
 
 # k = 11
 wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
                       cl = wbcd_train_labels, k = 11)
-CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+CrossTable(x = wbcd_test_pred, y = wbcd_test_labels,
+           prop.chisq = FALSE, dnn = c('predicted', 'actual'))
 
 # k = 15
 wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
                       cl = wbcd_train_labels, k = 15)
-CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+CrossTable(x = wbcd_test_pred, y = wbcd_test_labels,
+           prop.chisq = FALSE, dnn = c('predicted', 'actual'))
 
 # k = 27
 wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
                       cl = wbcd_train_labels, k = 27)
-CrossTable(x = wbcd_test_labels, y = wbcd_test_pred, prop.chisq = FALSE)
+CrossTable(x = wbcd_test_pred, y = wbcd_test_labels,
+           prop.chisq = FALSE, dnn = c('predicted', 'actual'))
 ```
 
 ---
@@ -373,10 +380,11 @@ knn.train
 
 ```{r}
 knn.test <- knn(train[, -8], test[, -8], train[, 8], k = 15)
-CrossTable(x = test[, 8], y = knn.test, prop.chisq = FALSE)
+CrossTable(x = knn.text, y = test[, 8],
+           prop.chisq = FALSE, dnn = c('predicted', 'actual'))
 ```
 
-kNN 알고리즘 모델의 정밀도는 81.7%, 재현율은 73.8%, 정확도는 70.0%이다.
+kNN 알고리즘 모델의 정밀도는 73.8%, 재현율은 81.7%, 정확도는 70.0%이다.
 
 ---
 
