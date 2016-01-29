@@ -22,3 +22,7 @@ image: /assets/article_images/2016-01-08-an_introduction_to_statistical_learning
 1. [저자 직강](http://www.r-bloggers.com/in-depth-introduction-to-machine-learning-in-15-hours-of-expert-videos/)  
 2. [비공식 솔루션](http://blog.princehonest.com/stat-learning/)  
 3. [고려대학교 DS-BA 랩실 세미나 자료](http://dsba.korea.ac.kr/wp/?page_id=167)
+
+* * *
+덧(1/29) : 본 책을 파이썬으로 구현한 페이지가 있어서 공유한다.
+[](https://github.com/JWarmenhoven/ISLR-python)
