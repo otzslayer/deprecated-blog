@@ -25,4 +25,4 @@ image: /assets/article_images/2016-01-08-an_introduction_to_statistical_learning
 
 * * *
 덧(1/29) : 본 책을 파이썬으로 구현한 페이지가 있어서 공유한다.
-[](https://github.com/JWarmenhoven/ISLR-python)
+[깃허브 페이지](https://github.com/JWarmenhoven/ISLR-python)
