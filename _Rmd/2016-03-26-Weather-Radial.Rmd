@@ -1,7 +1,7 @@
 ---
 title: "Weather Radials"
 author: "Jaeyoon Han"
-date: 'r Sys.Date()'
+date: '2016-03-26'
 output: html_document
 layout: post
 image: /assets/article_images/2016-03-26-weather-radial/weather1.jpg
