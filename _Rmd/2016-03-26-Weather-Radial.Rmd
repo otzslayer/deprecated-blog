@@ -8,11 +8,10 @@ image: /assets/article_images/2016-03-26-weather-radial/weather1.jpg
 categories: Visualizing
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
-### Creating weather radials with `highcharter` and `ggplot2`.
+## Creating weather radials with `highcharter` and `ggplot2`.
+
+---
 
 본 내용은 `highcharter` 패키지의 제작자인 [Joshua Kunst](http://jkunst.com)의 블로그의 포스트를 더 자세하게 재작성한 것임을 밝힌다.
 
