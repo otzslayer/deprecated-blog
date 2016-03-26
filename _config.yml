@@ -1,10 +1,11 @@
 # Build settings
 markdown: redcarpet
+highlighter : pygments
 redcarpet:
- extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data", "footnotes"]
-highlighter: pygments
-gems:
-  - jemoji
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "strikethrough", "superscript", "with_toc_data"]
+kramdown:
+ input: GFM
+gems: [jekyll-paginate]
   
 # Site settings
 title: "Become A Data Scientist"

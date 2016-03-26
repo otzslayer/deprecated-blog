@@ -4,7 +4,7 @@ author: "Jaeyoon Han"
 date: '2016-03-26'
 output: html_document
 layout: post
-image: /assets/article_images/2016-03-26-weather-radial/weather1.jpg
+image: /assets/article_images/2016-03-26-Weather-Radial/weather1.jpg
 categories: Visualizing
 ---
 
@@ -76,7 +76,7 @@ dsmin <- weather %>%
 
 `highchart()` 함수를 이용해 차트를 생성한다.
 
-```{r eval=FALSE}
+```{r}
 hc <- highchart() %>%
         hc_chart(type = "line") %>%
         hc_xAxis(type = "datetime",
@@ -120,7 +120,7 @@ y <- sprintf("{point.%s}", tolower(x))
 tltip <- tooltip_table(x, y)
 ```
 
-```{r eval=FALSE}
+```{r}
 hc <- highchart() %>%
         hc_chart(type = "column",
                  polar = TRUE) %>%
