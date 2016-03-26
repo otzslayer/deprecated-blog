@@ -3,7 +3,8 @@ markdown: kramdown
 highlighter : rouge
 kramdown:
  input: GFM
-gems: [jekyll-paginate]
+gems:
+    - jemoji
   
 # Site settings
 title: "Become A Data Scientist"
