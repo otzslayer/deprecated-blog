@@ -1,12 +1,9 @@
 # Build settings
-markdown: redcarpet
+markdown: kramdown
 highlighter : rouge
-redcarpet:
- extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data", "footnotes"]
 kramdown:
-  input: GFM
-gems:
- - jemoji
+ input: GFM
+gems: [jekyll-paginate]
   
 # Site settings
 title: "Become A Data Scientist"
