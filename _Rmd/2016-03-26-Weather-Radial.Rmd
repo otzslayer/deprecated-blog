@@ -9,7 +9,7 @@ categories: Visualizing
 ---
 
 
-## Creating weather radials with `highcharter` and `ggplot2`.
+## Creating weather radials with highcharter and ggplot2.
 
 ---
 
@@ -76,7 +76,7 @@ dsmin <- weather %>%
 
 `highchart()` 함수를 이용해 차트를 생성한다.
 
-```{r}
+```{r eval=FALSE}
 hc <- highchart() %>%
         hc_chart(type = "line") %>%
         hc_xAxis(type = "datetime",
@@ -120,7 +120,7 @@ y <- sprintf("{point.%s}", tolower(x))
 tltip <- tooltip_table(x, y)
 ```
 
-```{r}
+```{r eval=FALSE}
 hc <- highchart() %>%
         hc_chart(type = "column",
                  polar = TRUE) %>%
