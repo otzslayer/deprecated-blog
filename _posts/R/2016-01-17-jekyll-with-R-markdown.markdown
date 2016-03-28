@@ -5,7 +5,7 @@ categories: R
 image: /assets/article_images/2016-01-17-jekyll-with-R-markdown/markdown.jpg
 ---
 
-#### <center> jekyll with R Markdown </center>
+## jekyll with R Markdown
 
 ---
 

@@ -123,7 +123,7 @@ tltip <- tooltip_table(x, y)
 ```{r}
 hc <- highchart() %>%
         hc_chart(type = "column",
-                 polar = TRUE) %>%
+                 polar = FALSE) %>%
         hc_plotOptions(series = list(stacking = "normal",
                                      showInLegend = FALSE)) %>%
         hc_xAxis(gridLineWidth = 0.5,

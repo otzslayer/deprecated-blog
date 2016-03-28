@@ -1,0 +1,370 @@
+---
+title: "Pokemon!"
+author: "Jaeyoon Han"
+date: '2016-03-28'
+output: html_document
+layout: post
+image: /assets/article_images/2016-03-28-visualize-pokemon/pokemon.png
+categories: Visualizing
+---
+
+
+## Cluster and Visualize Pokemons
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.retina = 2, fig.width=6, fig.he)
+library(printr)
+```
+
+본 내용은 `highcharter` 패키지의 제작자인 [Joshua Kunst](http://jkunst.com)의 블로그의 포스트를 더 자세하게 재작성한 것임을 밝힌다.
+
+```{r}
+library(dplyr)
+```
+
+기존 데이터는 포켓몬 이름이 영어이므로, 한글로 바꾸기 위해서는 새로운 데이터가 필요하다. [포켓몬 목록 위키피디아 페이지](https://ko.wikipedia.org/wiki/%ED%8F%AC%EC%BC%93%EB%AA%AC_%EB%AA%A9%EB%A1%9D)에 있는 표를 스크래핑해서 이름은 따로 사용하도록 한다. 또한 전체 포켓몬이 아닌 2세대(251마리)만 필요하므로 기존 데이터에서 251마리만 사용하도록 한다.
+
+```{r}
+library(rvest)
+
+url <- "https://ko.wikipedia.org/wiki/%ED%8F%AC%EC%BC%93%EB%AA%AC_%EB%AA%A9%EB%A1%9D"
+wiki_poke <- read_html(url)
+
+first_gen <- wiki_poke %>%
+        html_nodes(xpath='//*[@id="mw-content-text"]/table[1]') %>%
+        html_table() %>%
+        .[[1]]
+
+second_gen <- wiki_poke %>%
+        html_nodes(xpath='//*[@id="mw-content-text"]/table[2]') %>%
+        html_table() %>%
+        .[[1]]
+
+poke_list_ko <- c(first_gen[, 2], second_gen[, 2])
+```
+
+혹시라도 `r poke_list_ko[grepl("니드런", poke_list_ko)]` 항목에서 기호가 문제가 된다면 다음과 같이 하면 된다.
+
+```{r eval=FALSE}
+poke_list_ko[grepl("니드런", poke_list_ko)] <- c("니드런(암)", "니드런(수)")
+```
+
+이제 포켓몬 데이터를 불러오도록 한다. 여러 데이터를 조인(Join)으로 합쳐서 다룰 예정이다.
+
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(purrr) # map_df()
+library(readr) # read_csv() // 한글 포함된 파일에선 문제 발생
+
+path <- function(x) paste0("https://raw.githubusercontent.com/phalt/pokeapi/master/data/v2/csv/", x)
+
+pkmn <- read_csv(path("pokemon.csv")) %>%
+        select(-(order : is_default)) %>%
+        rename(pokemon = identifier)
+
+stat <- read_csv(path("stats.csv")) %>%
+        rename(stat_id = id) %>%
+        right_join(read_csv(path("pokemon_stats.csv")),
+                   by = "stat_id") %>%
+        mutate(identifier = str_replace(identifier, "-", "_")) %>%
+        select(pokemon_id, identifier, base_stat) %>%
+        spread(identifier, base_stat) %>%
+        rename(id = pokemon_id)
+
+type <- read_csv(path("types.csv")) %>%
+        rename(type_id = id) %>%
+        right_join(read_csv(path("pokemon_types.csv")),
+                   by = "type_id") %>%
+        select(pokemon_id, identifier, slot) %>%
+        mutate(slot = paste0("type_", slot)) %>%
+        spread(slot, identifier) %>%
+        rename(id = pokemon_id)
+
+egg <- read_csv(path("egg_groups.csv")) %>%
+        rename(egg_group_id = id) %>%
+        right_join(read_csv(path("pokemon_egg_groups.csv")),
+                   by = "egg_group_id") %>%
+        group_by(species_id) %>%
+        mutate(ranking = row_number(),
+               ranking = paste0("egg_group_", ranking)) %>%
+        select(species_id, ranking, identifier) %>%
+        spread(ranking, identifier)
+
+img <- "https://github.com/phalt/pokeapi/tree/master/data/Pokemon_XY_Sprites" %>% 
+        read_html() %>% 
+        html_nodes("tr.js-navigation-item > .content > .css-truncate a") %>% 
+        map_df(function(x){
+                url <- x %>% html_attr("href")
+                data_frame(
+                        id = str_extract(basename(url), "\\d+"),
+                        url_image = basename(url)
+                )
+        }) %>%
+        mutate(id = as.numeric(id))
+
+url_bulbapedia_list <- "http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_base_stats_(Generation_VI-present)" 
+
+id <- url_bulbapedia_list %>% 
+        read_html(encoding = "UTF-8") %>% 
+        html_node("table.sortable") %>% 
+        html_table() %>% 
+        .[[1]] %>% 
+        as.numeric()
+
+url_icon <-  url_bulbapedia_list %>% 
+        read_html() %>%
+        html_nodes("table.sortable img") %>% 
+        html_attr("src")
+
+icon <- data_frame(id, url_icon) %>% 
+        filter(!is.na(id)) %>% 
+        distinct(id)
+
+color <- map_df(na.omit(unique(c(type$type_1, type$type_2))), function(t){
+        # t <- "bug"
+        col <- "http://pokemon-uranium.wikia.com/wiki/Template:%s_color" %>% 
+                sprintf(t) %>%
+                read_html() %>% 
+                html_nodes("span > b") %>% 
+                html_text()
+        data_frame(type = t, color = paste0("#", col))
+})
+
+colorf <- expand.grid(color_1 = color$color, color_2 = color$color,
+                      stringsAsFactors = FALSE) %>%
+        group_by(color_1, color_2) %>%
+        do({
+                n = 100; p = 0.27
+                data_frame(color_f = colorRampPalette(c(.$color_1, .$color_2))(n)[round(n*p)])
+                # colorRampPalette(a, b)(n)[m]는 a 색깔부터 b 색깔까지의
+                # 그라디언트 색 n 개를 생성해서 m 번째 색을 선택하는 함수
+                # 이상해씨와 같이 풀 타입과 독 타입을 같이 가지고 있는 경우,
+                # 위 함수를 써서 포켓몬을 나타내는 색을 지정한다.
+        })
+
+pokemon <- pkmn %>% 
+        left_join(type, by = "id") %>% 
+        left_join(stat, by = "id") %>% 
+        left_join(color %>% rename(type_1 = type, color_1 = color), by = "type_1") %>% 
+        left_join(color %>% rename(type_2 = type, color_2 = color), by = "type_2") %>% 
+        left_join(colorf, by =  c("color_1", "color_2")) %>% 
+        left_join(egg, by = "species_id") %>% 
+        left_join(img, by = "id") %>% 
+        left_join(icon, by = "id") %>%
+        .[1:251, ]
+
+# 포켓몬 이름을 한글로 바꿔준다.
+pokemon["pokemon"] <- poke_list_ko
+```
+
+이상해씨와 같이 여러 타입을 동시에 가지고 있는 경우 `color_f` 칼럼에 데이터가 존재하지만, 파이리와 같이 단일 타입인 경우 `color_f` 칼럼값이 `NA`다. 이 경우, `color_f`값을 `color_1`값으로 가질 수 있도록 하자.
+
+```{r}
+pokemon <- pokemon %>%
+        mutate(color_f = ifelse(is.na(color_f), color_1, color_f)) %>%
+        filter(!is.na(url_image))
+
+head(pokemon)
+```
+
+막대 그래프를 이용해 각 타입을 기준으로 2세대 포켓몬을 구분하고자 한다. 악타입과 강철타입은 2세대에서 새로 생겼고, 페어리타입은 6세대에서 추가되었다. 본 데이터는 최신판을 기준으로 한다. 이 때, 시각화는 `highchart()`를 활용한다.
+
+```{r}
+library(Hmisc)
+library(highcharter)
+
+pokemon$type_1 <- capitalize(pokemon$type_1)
+pokemon$type_2 <- capitalize(pokemon$type_2)
+
+dstype <- pokemon %>%
+        count(type_1, color_1) %>%
+        ungroup() %>%
+        arrange(desc(n)) %>%
+        rename(name = type_1,
+               color = color_1,
+               y = n) %>%
+        select(y, name, color) %>%
+        list.parse3()
+
+type_bar <- highchart() %>%
+        hc_xAxis(categories = unlist(pluck(dstype, i = 2))) %>%
+        hc_yAxis(title = NULL) %>%
+        hc_add_series(data = dstype, type = "bar", showInLegend = FALSE,
+                      name = "Number of Species")
+
+type_bar
+```
+
+막대 그래프를 이용한 결과도 충분히 미려하지만, 단일 타입만 나타낼 수 있다는 한계가 있었다. 이번에는 트리맵을 이용해서 보다 다양한 타입 경우의 수를 나타내도록 하자.
+
+```{r}
+set.seed(3514)
+library(treemap)
+
+tm <- pokemon %>%
+        mutate(type_2 = ifelse(is.na(type_2), paste("Only", type_1), type_2),
+               type_1 = type_1) %>%
+        group_by(type_1, type_2) %>%
+        summarise(n = n()) %>%
+        ungroup() %>%
+        treemap(index = c("type_1", "type_2"),
+                vSize = "n", vColor = "type_1")
+```
+
+결과가 마음에 들지 않는다. 각 타입의 느낌을 한 눈에 받을 수도 없고, 전체적으로 깔끔하지 못하다는 인상을 받았다. 이번에는 `highchart()`를 이용해 트리맵을 그려보도록 하자.
+
+```{r}
+tm$tm <- tm$tm %>%
+        tbl_df() %>%
+        left_join(pokemon %>% select(type_1, type_2, color_f) %>%
+                          distinct(), by = c("type_1", "type_2")) %>%
+        left_join(pokemon %>% select(type_1, color_1) %>%
+                          distinct(), by = c("type_1")) %>%
+        mutate(type_1 = paste0("Main Type is ", type_1),
+               color = ifelse(is.na(color_f), color_1, color_f))
+
+hctm <- highchart() %>%
+        hc_add_series_treemap(tm, allowDrillToNode = TRUE,
+                              layoutAlgorithm = "squarified")
+
+hctm
+```
+
+그 다음으로 t-SNE(t-distributed Stochastic Neighbor Embedding) 기법을 활용해서 데이터의 차원을 축소시킨다. t-SNE는 2008년 Laurens van der Maaten과 Geoffrey Hinton에 의해 개발되었다. t-SNE의 자세한 정보는 [위키피디아 페이지](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding)와 [관련 논문](http://jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf)를 확인하길 바란다.
+
+```{r}
+library(tsne)
+library(ggplot2)
+set.seed(13242)
+
+tsne_poke <- pokemon %>%
+        select(type_1, type_2, weight, height, base_experience,
+               attack, defense, special_attack, special_defense, speed,
+               hp, egg_group_1, egg_group_2) %>%
+        map(function(x){
+                ifelse(is.na(x), "NA", x)
+        }) %>%
+        as.data.frame() %>%
+        tbl_df() %>%
+        model.matrix(~., data = .) %>%
+        as.data.frame() %>%
+        tbl_df() %>%
+        .[-1] %>%
+        tsne(perplexity = 60)
+
+pokemon <- pokemon %>%
+        mutate(x = tsne_poke[, 1],
+               y = tsne_poke[, 2])
+
+poke_centers <- pokemon %>%
+        group_by(type_1, color_1) %>%
+        summarise(cx = mean(x), cy = mean(y),
+                  sdcx = sd(x), sdcy = sd(y))
+
+cols <- pokemon %>%
+        select(type_1, color_1) %>%
+        distinct() %>%
+        {setNames(.$color_1, .$type_1)}
+
+type_plot <- ggplot(pokemon) +
+        geom_point(aes(x, y, color = type_1), size = 4, alpha = 0.5) +
+        scale_color_manual("Type", values = cols) + 
+        geom_text(data = poke_centers, aes(cx, cy, label = type_1), family = "OpenSans-CondensedBold") + 
+        theme_minimal(base_family = "OpenSans-CondensedLight") +
+        theme(legend.position = "right",
+              plot.title = element_text(family = "OpenSans-CondensedBold")) +
+        facet_wrap(~type_1) + 
+        xlab("") + ylab("") + ggtitle("Pokémon Type")
+
+type_plot
+```
+
+포켓몬 타입별로 클러스터링된 포켓몬 데이터를 시각화하였다. 마지막으로 t-SNE 결과를 `highchart()`를 사용해서 시각화하도록 한다. 원하는 결과물은 포켓몬 이미지와 함께 클러스터링 결과를 한눈에 볼 수 있는 차트다. 데이터를 전처리하는 과정이 다소 복잡하다. 다시 살펴보면서 차근차근 공부해야 할 듯 하다.
+
+```{r}
+ds <- pokemon %>%
+        select(pokemon, type_1, type_2, weight, height,
+               attack, defense, special_attack, special_defense,
+               url_image, url_icon, color = color_1, x, y) %>%
+        list.parse3() %>%
+        map(function(x){
+                x$marker$symbol <- sprintf("url(%s)", x$url_icon)
+                x$marker$radius <- 2
+                x$url_icon <- NULL
+                x
+        })
+
+ds2 <- pokemon %>%
+        select(color = color_1, x, y) %>%
+        mutate(color = hex_to_rgba(color, 0.15)) %>%
+        list.parse3()
+
+```
+
+```{r}
+library(htmltools)
+urlimage <- "https://raw.githubusercontent.com/phalt/pokeapi/master/data/Pokemon_XY_Sprites/"
+
+tooltip <- c("pokemon", "type_1", "type_2",
+             "weight", "height", "attack", "defense",
+             "special_attack", "special_defense") %>%
+        map(function(x){
+                tags$tr(
+                        tags$th(str_replace_all(str_to_title(x), "-", " ")),
+                        tags$td(paste0("{point.", x, "}"))
+                ) 
+        }) %>%
+        do.call(tagList, .) %>%
+        tagList(
+                tags$img(src = paste0(urlimage, "{point.url_image}"),
+                         width = "125px", height = "125px")
+        ) %>%
+        as.character()
+```
+
+```{r}
+hctsne <- highchart() %>% 
+        hc_chart(zoomType = "xy") %>% 
+        hc_xAxis(minRange = diff(range(pokemon$x))/5) %>%
+        hc_yAxis(minRange = diff(range(pokemon$y))/5) %>%
+        hc_add_series(data = ds,
+                      type = "scatter",
+                      name = "pokemons",
+                      states = list(hover = list(halo = list(
+                              size  = 50,
+                              attributes = list(
+                                      opacity = 1)
+                      )))) %>%
+        hc_add_series(data = ds2, type = "scatter",
+                      marker = list(radius = 75, symbol = "circle"),
+                      zIndex = -3,  enableMouseTracking = FALSE,
+                      linkedTo = ":previous") %>%
+        hc_plotOptions(series = list()) %>%  
+        hc_tooltip(
+                useHTML = TRUE,
+                borderRadius = 0,
+                borderWidth = 5,
+                headerFormat = "<table>",
+                pointFormat = tooltip,
+                footerFormat = "</table>"
+        ) %>% 
+        hc_add_theme(
+                hc_theme_null(
+                        chart = list(
+                                backgroundColor = "transparent",
+                                style = list(
+                                        fontFamily = "Lato"
+                                )
+                        )
+                )
+        )
+
+hctsne
+```
+
+Highchart로 시각화하는 과정도 굉장하지만, 시각화를 위해 데이터를 전처리하는 과정 또한 간과할 수 없다는 점을 다시 느꼈다. 시각화에 필요한 데이터 구조를 명확히 알고 있어야 전처리할 수 있다는 점에서, 시각화를 위한 데이터 전처리는 시각화 도구와 연계해서 공부를 해야겠다.

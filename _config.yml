@@ -1,8 +1,8 @@
 # Build settings
 markdown: kramdown
 kramdown:
- input: GFM
-highlighter: rouge
+  input: GFM
+  syntax_highlighter: rouge
 gems: [jekyll-paginate]
   
 # Site settings
