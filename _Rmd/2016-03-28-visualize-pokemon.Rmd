@@ -308,6 +308,8 @@ ds2 <- pokemon %>%
 
 ```{r}
 library(htmltools)
+library(stringi)
+
 urlimage <- "https://raw.githubusercontent.com/phalt/pokeapi/master/data/Pokemon_XY_Sprites/"
 
 tooltip <- c("pokemon", "type_1", "type_2",
@@ -315,7 +317,7 @@ tooltip <- c("pokemon", "type_1", "type_2",
              "special_attack", "special_defense") %>%
         map(function(x){
                 tags$tr(
-                        tags$th(str_replace_all(str_to_title(x), "_", " ")),
+                        tags$th(str_to_title(str_replace_all(x, "_", " "))),
                         tags$td(paste0("{point.", x, "}"))
                 ) 
         }) %>%
@@ -358,7 +360,7 @@ hctsne <- highchart() %>%
                         chart = list(
                                 backgroundColor = "transparent",
                                 style = list(
-                                        fontFamily = "OpenSans-CondensedLight"
+                                        fontFamily = "KoPubDotum Medium"
                                 )
                         )
                 )

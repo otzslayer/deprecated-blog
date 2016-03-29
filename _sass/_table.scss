@@ -32,30 +32,23 @@ table tr th, table tr td
 	margin:0;
 	padding:6px 13px;
 }
+
 */
 
 table {
   margin-top: 10px;
   margin-bottom: 10px;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.6em;
   border-collapse: collapse;
-	text-align: center;
   margin-left: auto;
   margin-right: auto;
-}
-
-table {
   display: block;
-  /*overflow-x:scroll;*/
-  /*white-space: pre;*/
-  overflow-x: auto;
-  word-wrap: normal;
 }
 
 table th {
 	font-weight: bold;
-	padding: 2px 4px;
+	padding: 2px 8px;
 }
 
 tr:hover {
@@ -71,6 +64,12 @@ table tr:nth-child(2n)
 	background-color:#f8f8f8;
 }
 
-table tr th[align="center"], table tr td[align="center"] {
+table tr th, table tr td
+{
+	text-align:center;
+}
+
+table img
+{
 	text-align:center;
 }
