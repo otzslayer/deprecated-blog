@@ -14,7 +14,7 @@ categories: Visualizing
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(fig.retina = 2, fig.width=6, fig.he)
+knitr::opts_chunk$set(fig.retina = 2)
 library(printr)
 ```
 
@@ -315,7 +315,7 @@ tooltip <- c("pokemon", "type_1", "type_2",
              "special_attack", "special_defense") %>%
         map(function(x){
                 tags$tr(
-                        tags$th(str_replace_all(str_to_title(x), "-", " ")),
+                        tags$th(str_replace_all(str_to_title(x), "_", " ")),
                         tags$td(paste0("{point.", x, "}"))
                 ) 
         }) %>%
@@ -358,7 +358,7 @@ hctsne <- highchart() %>%
                         chart = list(
                                 backgroundColor = "transparent",
                                 style = list(
-                                        fontFamily = "Lato"
+                                        fontFamily = "OpenSans-CondensedLight"
                                 )
                         )
                 )
