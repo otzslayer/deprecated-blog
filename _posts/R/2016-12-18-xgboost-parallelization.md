@@ -141,3 +141,6 @@ xgb_option[3]/domc[3]
 {% endhighlight %}
 
 첫 번째와 두 번째 경우의 차이는 거의 없다. 하지만, `doMC` 라이브러리의 병렬처리 기능을 사용하여 4개의 쓰레드로 CV를 수행한 경우 두 배 이상의 속도를 보여주며 병렬처리 기능이 활성화됨을 알 수 있다.
+
+<img src="/assets/article_images/2016-12-18-xgboost-parallelization.rmd/unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" width="576" style="display: block; margin: auto;" />
+

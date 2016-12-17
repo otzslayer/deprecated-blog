@@ -33,9 +33,9 @@ custom_theme <- theme_bw(base_family = "Open Sans") +
           axis.title.y = element_text(size = 11,
                                       margin = margin(0, 10, 0, 0),
                                       face = "bold"),
-          plot.title = element_text(family = "Open Sans"),
+          plot.title = element_text(family = "Open Sans", face = "bold", size = 20),
           panel.background = element_blank(),
-          axis.text.x = element_text(angle = 90, face = "italic"),
+          axis.text.x = element_text(angle = 0, face = "italic", vjust = .1),
           axis.text.y = element_text(face = "italic"), legend.position = "bottom",
           legend.title = element_text(size = 9, face = 'bold.italic'))
 theme_set(custom_theme)
@@ -107,3 +107,10 @@ xgb_option[3]/domc[3]
 ```
 
 첫 번째와 두 번째 경우의 차이는 거의 없다. 하지만, `doMC` 라이브러리의 병렬처리 기능을 사용하여 4개의 쓰레드로 CV를 수행한 경우 두 배 이상의 속도를 보여주며 병렬처리 기능이 활성화됨을 알 수 있다.
+
+```{r, echo=FALSE}
+ggplot(data.frame(Option = c("No Option", "Internal Option", "External Option"),
+                  Time = c(vanilla[3], xgb_option[3], domc[3])), aes(x = Option, y = Time, fill = Option)) + 
+    geom_col() + xlab(NULL) + ggtitle("\nComparison\n")
+```
+
