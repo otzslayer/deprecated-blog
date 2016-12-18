@@ -5,19 +5,18 @@
 @import 'table'
 @import 'bourbon/bourbon'
 @import 'monaco'
-@import url(https://fonts.googleapis.com/css?family=ABeeZee:400,400italic)
 @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,400italic,700,700italic)
-@import url(https://cdn.rawgit.com/openhiun/hangul/14c0f6faa2941116bb53001d6a7dcd5e82300c3f/nanumbarungothic.css)
-@import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700italic,400italic,700)
-
+@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css)
+@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-jp.css)
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css)
 
 .cf
   @include clearfix
 
 $rs: 16px
 
-$font-serif: 'ABeeZee', NanumBarunGothic
-$font-sans: 'ABeeZee', Open Sans, MundoSans, "Helvetica Neue", Arial, Helvetica, sans-serif
+$font-serif: Open Sans, Noto Sans KR, Spoqa Han Sans
+$font-sans: Open Sans, Noto Sans KR, Spoqa Han Sans, sans-serif
 $font-monospace: 'Monaco2', Ubuntu Mono, Monaco, Consolas, Lucida Console, monospace
 
 
@@ -368,8 +367,9 @@ body
       margin: 0
       font-family: $font-sans
       margin-bottom: 4px
-      padding-top: 15px
-      padding-left: 15px
+      padding-top: 30px
+      padding-bottom: 10px
+      padding-left: 30px
     h4
       font-size: 24px
     h5
@@ -388,7 +388,7 @@ body
     h2
       font-size: 32px
     p
-      font-weight: 400
+      font-weight: 300
       font-style: normal
       font-size: 15px
       line-height: 30px
@@ -416,7 +416,7 @@ body
       text-align: center
       padding: 0 0 0 0
     figcaption
-      font-weight: 400
+      font-weight: 300
       font-style: italic
       font-size: 15px
       line-height: 1.3
@@ -439,7 +439,7 @@ body
       border-left: 3px solid #57ad68
       p
         letter-spacing: 0.01rem
-        font-weight: 400
+        font-weight: 300
         font-style: italic
         mborder-left: 3px solid #57ad68
         mpadding-left: 20px
@@ -452,7 +452,7 @@ body
       line-height: 30px
     li
       padding: 0
-      font-weight: 400
+      font-weight: 300
       font-style: normal
       font-size: 15px
       line-height: 20px
