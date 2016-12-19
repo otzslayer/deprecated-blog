@@ -5,7 +5,7 @@ date: '2016-12-20'
 output: html_document
 layout: post
 image: /assets/article_images/2016-12-20-adaptive-lasso/title.jpg
-categories: R
+categories: Machine-Learning
 ---
 
 
