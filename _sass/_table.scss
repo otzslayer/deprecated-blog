@@ -43,13 +43,15 @@ table {
   border-collapse: collapse;
   margin-left: auto;
   margin-right: auto;
-  display: block;
   overflow-x: auto;
+  width: 80%
+
 }
 
 table th {
 	font-weight: bold;
 	padding: 2px 8px;
+    background-color: #e6e6e6;
 }
 
 tr:hover {
@@ -57,12 +59,12 @@ tr:hover {
 }
 
 table td {
-	padding: 2px 4px;
+	padding: 7px 4px;
 }
 
 table tr:nth-child(2n)
 {
-	background-color:#f8f8f8;
+	background-color:#f3f3f3;
 }
 
 table tr th, table tr td
