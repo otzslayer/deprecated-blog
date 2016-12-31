@@ -107,7 +107,7 @@ Tuning parameter인 $\lambda$는 CV에 의해 적절한 값으로 설정되는�
 #### Adaptive Lasso in R
 
 
-{% highlight r %}
+{% highlight r linenos %}
 library(ISLR)
 data("Hitters")
 Hitters <- na.omit(Hitters)
@@ -128,7 +128,7 @@ head(Hitters)
 ##### Data Preparation
 
 
-{% highlight r %}
+{% highlight r linenos %}
 set.seed(1)
 x <- model.matrix(Salary ~., Hitters)[, -1]
 y <- Hitters$Salary
@@ -140,7 +140,7 @@ y.test <- y[test]
 ##### Implementation of Adaptive Lasso
 
 
-{% highlight r %}
+{% highlight r linenos %}
 # Adaptive Lasso Function with Automatic 10-fold CV
 adaLasso <- function(data, labels, parallel = TRUE, standardize = TRUE, weight, gamma = 1, formula = NULL, ols.data = NULL, lambda = NULL, seed = 1){
     require(glmnet)
@@ -175,6 +175,6 @@ adaLasso <- function(data, labels, parallel = TRUE, standardize = TRUE, weight, 
 {% endhighlight %}
 
 
-{% highlight r %}
+{% highlight r linenos %}
 adalasso <- adaLasso(data = x[train, ], labels = y[train], weight = "ridge", gamma = 1, seed = 1)
 {% endhighlight %}
