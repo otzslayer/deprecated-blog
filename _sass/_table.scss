@@ -1,20 +1,21 @@
 
 table {
+  display: block;
   margin-top: 10px;
   margin-bottom: 10px;
+  margin-left: 20px;
   font-size: 13px;
   line-height: 1.6em;
   border-collapse: collapse;
   margin-right: auto;
   overflow-x: auto;
-  width: 80%
-
+  width: 80%;
 }
 
 table th {
-	font-weight: bold;
-	padding: 2px 8px;
-    background-color: #e6e6e6;
+  font-weight: bold;
+  padding: 2px 8px;
+  background-color: #e6e6e6;
 }
 
 tr:hover {
@@ -22,20 +23,20 @@ tr:hover {
 }
 
 table td {
-	padding: 7px 4px;
+  padding: 7px 4px;
 }
 
 table tr:nth-child(2n)
 {
-	background-color:#f3f3f3;
+  background-color:#f3f3f3;
 }
 
 table tr th, table tr td
 {
-	text-align:center;
+  text-align:center;
 }
 
 table img
 {
-	text-align:center;
+  text-align:center;
 }
