@@ -21,7 +21,7 @@ categories: machine-learning
 원본 데이터에 약간의 전처리를 가했다. 결측값을 제거하기 위해 Interpolation을 수행하고, 약간의 Feature engineering을 한 후 필요한 칼럼만 남겨두었다.
 
 
-{% highlight r linenos %}
+{% highlight r %}
 library(readr)
 
 train <- read_csv(file = "data/titanic/train.csv")
@@ -33,7 +33,7 @@ test$Survived <- as.factor(test$Survived)
 헤당 데이터의 Sparse matrix를 만들기 위해서 `model.matrix()` 함수를 사용한다.
 
 
-{% highlight r linenos %}
+{% highlight r %}
 train_mat <- model.matrix(data = train, Survived ~ .)[, -1]
 test_mat <- model.matrix(data = test, Survived ~ .)[, -1]
 {% endhighlight %}
@@ -43,7 +43,7 @@ test_mat <- model.matrix(data = test, Survived ~ .)[, -1]
 Feature selection을 위해서 `Boruta` 패키지를 사용한다. Boruta algorithm은 Random forest의 wrapper로 포함되어 있는 Feature importance 기능과 굉장히 유사한데, 최근 Kaggle의 House price 예측 컴피티션에서 한 참가자가 사용한 것을 보고 알게 되었다. 제법 괜찮은 알고리즘으로 알고 있어서 사용했다.
 
 
-{% highlight r linenos %}
+{% highlight r %}
 library(Boruta)
 
 set.seed(7)
@@ -67,14 +67,14 @@ getSelectedAttributes(bor.result)
 {% endhighlight %}
 
 
-{% highlight r linenos %}
+{% highlight r %}
 plot(bor.result)
 {% endhighlight %}
 
 <img src="/assets/article_images/2016-12-31-stacked-generalization/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="576" style="display: block; margin: auto;" />
 
 
-{% highlight r linenos %}
+{% highlight r %}
 bor.result$finalDecision
 {% endhighlight %}
 
@@ -103,7 +103,7 @@ Levels: Tentative Confirmed Rejected
 {% endhighlight %}
 
 
-{% highlight r linenos %}
+{% highlight r %}
 train_mat <- train_mat[, getSelectedAttributes(bor.result)]
 test_mat <- test_mat[, getSelectedAttributes(bor.result)]
 {% endhighlight %}
@@ -126,7 +126,7 @@ test_mat <- test_mat[, getSelectedAttributes(bor.result)]
 ##### Base Model 1: kNN
 
 
-{% highlight r linenos %}
+{% highlight r %}
 library(e1071)
 library(class)
 
@@ -139,7 +139,7 @@ knn <- knn(train_mat, test_mat, factor(train$Survived), k = knn.cv$best.paramete
 ##### Base Model 2: SVM with Linear Kernel
 
 
-{% highlight r linenos %}
+{% highlight r %}
 doMC::registerDoMC(4)
 set.seed(7)
 linear.svm.cv <- tune.svm(x = train_mat, y = factor(train$Survived), kernel = "linear", cost = c(0.001, 0.01, 0.1, 1, 5, 10),
@@ -150,7 +150,7 @@ linear.svm <- predict(linear.svm.cv$best.model, test_mat)
 ##### Base Model 3: SVM with Polynomial Kernel
 
 
-{% highlight r linenos %}
+{% highlight r %}
 set.seed(7)
 poly.svm.cv <- tune.svm(x = train_mat, y = factor(train$Survived), kernel = "polynomial",
                      degree = c(2, 3, 4), coef0 = c(0.1, 0.5, 1, 2),
@@ -162,7 +162,7 @@ poly.svm <- predict(poly.svm.cv$best.model, test_mat)
 ##### Base Model 4: SVM with Radial Kernel
 
 
-{% highlight r linenos %}
+{% highlight r %}
 set.seed(7)
 radial.svm.cv <- tune.svm(x = train_mat, y = factor(train$Survived), kernel = "radial",
                      gamma = c(0.1, 0.5, 1, 2, 3), coef0 = c(0.1, 0.5, 1, 2),
@@ -174,7 +174,7 @@ radial.svm <- predict(radial.svm.cv$best.model, test_mat)
 ##### Base Model 5: Random Forest
 
 
-{% highlight r linenos %}
+{% highlight r %}
 library(ranger)
 
 set.seed(7)
@@ -188,7 +188,7 @@ randomForest <- randomForest$predictions
 ##### Base Model 6: Logistic Regression with L1 Regularization
 
 
-{% highlight r linenos %}
+{% highlight r %}
 library(glmnet)
 
 set.seed(7)
@@ -201,7 +201,7 @@ logit.L1 <- as.vector(ifelse(logit.L1 > 0.5, 1, 0))
 ##### Base Model 7: Logistic Regression with L2 Regularization
 
 
-{% highlight r linenos %}
+{% highlight r %}
 set.seed(7)
 logit_L2.cv <- cv.glmnet(x = train_mat, y = train$Survived, family = 'binomial',
                    alpha = 0)
@@ -212,7 +212,7 @@ logit.L2 <- as.vector(ifelse(logit.L2 > 0.5, 1, 0))
 ##### Base Model 8: Xgboost
 
 
-{% highlight r linenos %}
+{% highlight r %}
 library(xgboost)
 
 trCtrl <- trainControl(method = "repeatedcv", number = 10, allowParallel = TRUE)
@@ -228,7 +228,7 @@ xgb.grid <- expand.grid(nrounds = c(180, 200, 220),
 {% endhighlight %}
 
 
-{% highlight r linenos %}
+{% highlight r %}
 set.seed(7)
 doMC::registerDoMC(4)
 xgbTrain <- train(x = train_mat,
@@ -252,7 +252,7 @@ xgb <- ifelse(xgb > 0.5, 1, 0)
 ##### Accuracy of Base Models
 
 
-{% highlight r linenos %}
+{% highlight r %}
 cat("Accuracy(kNN):", round(confusionMatrix(knn, test$Survived, positive = '1')$overall[1], 4),
 "\nAccuracy(SVM, Linear):", round(confusionMatrix(linear.svm, test$Survived, positive = '1')$overall[1], 4),
 "\nAccuracy(SVM, Polynomial):", round(confusionMatrix(poly.svm, test$Survived, positive = '1')$overall[1], 4),
@@ -282,7 +282,7 @@ Accuracy(Xgboost): 0.7864
 
 
 
-{% highlight r linenos %}
+{% highlight r %}
 folded_train <- train %>%
     mutate(foldID = rep(1:5, each = nrow(train)/5)) %>%
     select(foldID, everything())
@@ -373,7 +373,7 @@ for(targetFold in 1:5){
 {% endhighlight %}
 
 
-{% highlight r linenos %}
+{% highlight r %}
 meta_train <- cbind(train_mat,
                     kNN = k_NN - 1,
                     LinearSVM = svm.linear - 1,
@@ -386,7 +386,7 @@ meta_train <- cbind(train_mat,
 {% endhighlight %}
 
 
-{% highlight r linenos %}
+{% highlight r %}
 meta_test <- cbind(test_mat,
                    kNN = as.numeric(knn) - 1,
                    LinearSVM = as.numeric(linear.svm) - 1,
@@ -403,7 +403,7 @@ meta_test <- cbind(test_mat,
 마지막으로 모델을 스택하는 작업만 남았다. 스택 모델은 위에서 가장 좋은 성능을 보인 **Logistic Regression with L1 Regularization**으로 만든다. 10-fold Cross Validation으로 적절한 `lambda`값을 찾도록 하자.
 
 
-{% highlight r linenos %}
+{% highlight r %}
 lambda <- exp(-seq(5, 6, length.out = 400))
 
 set.seed(7)
@@ -415,7 +415,7 @@ meta.pred <- as.vector(ifelse(meta.pred > 0.5, 1, 0))
 {% endhighlight %}
 
 
-{% highlight r linenos %}
+{% highlight r %}
 cat("Accuracy(Stacked Model):", round(confusionMatrix(meta.pred, test$Survived, positive = '1')$overall[1], 4))
 {% endhighlight %}
 
