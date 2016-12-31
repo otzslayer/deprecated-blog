@@ -138,7 +138,6 @@ knitr::include_graphics("assets/images/AdaptiveLassoFigure1.png")
 library(ISLR)
 data("Hitters")
 Hitters <- na.omit(Hitters)
-head(Hitters)
 ```
 
 ##### Data Preparation

@@ -31,7 +31,7 @@ Scalability 등의 이유로 인해 Python에서 XGBoost 구현체를 사용하�
 테스트는 작업용 맥북프로 레티나 13인치, 4개 쓰레드 + 8GB 메모리 환경에서 수행하였다.
 
 
-{% highlight r %}
+{% highlight r linenos %}
 library(caret)
 library(plyr)
 library(xgboost)
@@ -56,7 +56,7 @@ dat <- twoClassSim(500)
 - `doMC` 라이브러리의 병렬처리 기능을 사용한 경우 (`registerDoMC(cores = 4)`)
 
 
-{% highlight r %}
+{% highlight r linenos %}
 vanilla <- system.time(foo())
 
 
@@ -70,7 +70,7 @@ domc <- system.time(foo())
 
 
 
-{% highlight r %}
+{% highlight r linenos %}
 vanilla[3] 
 {% endhighlight %}
 
@@ -82,7 +82,7 @@ vanilla[3]
 
 
 
-{% highlight r %}
+{% highlight r linenos %}
 xgb_option[3]
 {% endhighlight %}
 
@@ -94,7 +94,7 @@ xgb_option[3]
 
 
 
-{% highlight r %}
+{% highlight r linenos %}
 domc[3]
 {% endhighlight %}
 
@@ -106,7 +106,7 @@ domc[3]
 
 
 
-{% highlight r %}
+{% highlight r linenos %}
 vanilla[3]/domc[3]
 {% endhighlight %}
 
@@ -118,7 +118,7 @@ vanilla[3]/domc[3]
 
 
 
-{% highlight r %}
+{% highlight r linenos %}
 vanilla[3]/xgb_option[3]
 {% endhighlight %}
 
@@ -130,7 +130,7 @@ vanilla[3]/xgb_option[3]
 
 
 
-{% highlight r %}
+{% highlight r linenos %}
 xgb_option[3]/domc[3]
 {% endhighlight %}
 
