@@ -17,7 +17,7 @@ $rs: 16px
 
 $font-serif: Open Sans, Noto Sans KR, Spoqa Han Sans
 $font-sans: Open Sans, Noto Sans KR, Spoqa Han Sans, sans-serif
-$font-monospace: 'Monaco2', Ubuntu Mono, Monaco, Consolas, Lucida Console, monospace
+$font-monospace: Ubuntu Mono, Monaco, Consolas, Lucida Console, monospace
 
 
 @mixin respond-to($breakpoint)
@@ -407,8 +407,9 @@ body
       code
         border: 1px solid #e8e8e8
         border-radius: 3px
-        background-color: #f0f0f0
-        color: #6b1616
+        background-color: #f9f9f9
+        padding: .25em .5em
+        color: #bf616a
     a
       color: #333
       text-decoration: underline
@@ -476,7 +477,7 @@ body
         overflow-x: auto
         border: 1px solid #e8e8e8
         border-radius: 3px
-        background-color: #f0f0f0
+        background-color: #f9f9f9
         > code
           border: 0
           padding-right: 0
@@ -645,7 +646,7 @@ pre,
 code
   font-family: $font-monospace
   text-align: left
-  font-size: 13px
+  font-size: inherit
 
 code
   padding: 1px 1px
@@ -658,8 +659,12 @@ pre
   overflow-x: auto
   border: 1px solid #e8e8e8
   border-radius: 3px
-  background-color: #f0f0f0
+  background-color: #f9f9f9
+  line-height: 2em
   > code
     border: 0
     padding-right: 0
     padding-left: 0
+
+code[class="language-text"]
+  border-left: 30px
