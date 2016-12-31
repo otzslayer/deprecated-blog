@@ -2,7 +2,7 @@
 markdown: kramdown
 kramdown:
   input: GFM
-  syntax_highlighter: rouge
+  syntax_highlighter: pygments
 gems: [jekyll-paginate]
   
 # Site settings
