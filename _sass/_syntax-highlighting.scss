@@ -90,6 +90,7 @@
   pre.lineno {
     border: none;
     @include opacity(0.6);
+    margin-left: 0px;
   }
 
   .lineno {
