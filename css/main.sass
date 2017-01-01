@@ -9,14 +9,15 @@
 @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css)
 @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-jp.css)
 @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css)
+@import url(//cdn.jsdelivr.net/font-kopub/1.0/kopubdotum.css)
 
 .cf
   @include clearfix
 
 $rs: 16px
 
-$font-serif: Open Sans, Noto Sans KR, Spoqa Han Sans
-$font-sans: Open Sans, Noto Sans KR, Spoqa Han Sans, sans-serif
+$font-serif: Open Sans, KoPub Dotum, Noto Sans KR, Spoqa Han Sans
+$font-sans: Open Sans, KoPub Dotum, Noto Sans KR, Spoqa Han Sans, sans-serif
 $font-monospace: Source Code Pro, Menlo, Ubuntu Mono, Monaco, Consolas, Lucida Console, monospace
 
 
@@ -38,10 +39,10 @@ body
   margin: 0
   padding: 0
   line-height: 2
-  font-smoothiing: antialiased
+  -webkit-text-stroke: 0.5px
   -moz-osx-font-smoothing: grayscale
   text-rendering: optimizeLegibility
-  -webkit-font-smoothing: subpixel-antialiased
+  -webkit-font-smoothing: antialiased
   -moz-font-feature-settings: "liga=1, dlig=1"
   -ms-font-feature-settings: "liga", "dlig"
   -webkit-font-feature-settings: "liga", "dlig"
@@ -390,7 +391,7 @@ body
     h2
       font-size: 32px
     p
-      font-weight: 400
+      font-weight: 300
       font-style: normal
       font-size: 15px
       line-height: 30px
