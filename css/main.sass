@@ -17,7 +17,7 @@ $rs: 16px
 
 $font-serif: Open Sans, Noto Sans KR, Spoqa Han Sans
 $font-sans: Open Sans, Noto Sans KR, Spoqa Han Sans, sans-serif
-$font-monospace: Ubuntu Mono, Monaco, Consolas, Lucida Console, monospace
+$font-monospace: Source Code Pro, Menlo, Ubuntu Mono, Monaco, Consolas, Lucida Console, monospace
 
 
 @mixin respond-to($breakpoint)
@@ -38,6 +38,7 @@ body
   margin: 0
   padding: 0
   line-height: 2
+  font-smoothiing: antialiased
   -moz-osx-font-smoothing: grayscale
   text-rendering: optimizeLegibility
   -webkit-font-smoothing: subpixel-antialiased
@@ -646,7 +647,7 @@ pre,
 code
   font-family: $font-monospace
   text-align: left
-  font-size: 14px
+  font-size: 13px
 
 code
   padding: 1px 1px
@@ -661,7 +662,7 @@ pre
   border-radius: 3px
   background-color: #f3f3f3
   line-height: 2em
-  font-size: 14px
+  color: white
   > code
     border: 0
     padding-right: 0
