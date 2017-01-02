@@ -37,6 +37,7 @@ Stacking (Meta ensembliing 이라고도 한다.)은 여러 개의 예측 모델�
 
 이제 k-NN을 이용해서 이 분류 문제를 풀어보도록 하자. 5-fold Cross-Validation을 수행하여 가장 적절한 $k$ 값을 $K = (1, 2, \cdots, 30)$ 에서 찾는다.
 
+{% highlight r linenos %}
     1. 트레이닝 데이터를 다섯 개의 똑같은 사이즈의 fold로 나눈다. 이들을 test folds라고 하자.
     2. k = 1, 2, ..., 10 에 대해서
         2.1 각각의 test fold에 대해서
@@ -45,7 +46,7 @@ Stacking (Meta ensembliing 이라고도 한다.)은 여러 개의 예측 모델�
             2.1.3 test fold에 대한 예측값을 생성하여 정확도로 평가한다.
         2.2 총 다섯 개 fold 예측값의 정확도의 평균을 계산한다.
     3. 가장 좋은 평균 CV 정확도를 보이는 k 값을 선택한다.
-    
+{% endhighlight %} 
 
 
 <img src="/assets/article_images/2016-12-28-model-stacking/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="576" style="display: block; margin: auto;" />
