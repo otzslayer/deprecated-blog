@@ -39,16 +39,22 @@ categories: machine-learning
 
 -	Boruta 알고리즘의 동작 과정
 
-    	1.  모든 피쳐들을 복사해서 새로운 칼럼을 생성한다.
-    	2.  복사한 피쳐들 (섀도우 피쳐) 각각을 따로 섞는다.
-    	3.  섀도우 피쳐들에 대해서 랜덤 포레스트를 실행하고, Z score를 얻는다.
-    	4.  얻은 Z score 중에서 최댓값인 MSZA를 찾는다. (MSZA, Max Z-score among shadow attributes)
-    	5.  기존 피쳐들에 대해서 랜덤 포레스트를 실행하여 Z score를 얻는다.
-    	6.  각각의 기존 피쳐들에 대해서 Z-score > MSZA 인 경우 히트 수를 올린다.
-    	7.  Z-score <= MSZA인 경우, MSZA에 대해서 two-side equality test를 수행한다.
-    	8.  통계적으로 유의한 수준에서 Z-score < MSZA인 경우, 해당 피쳐를 중요하지 않은 피쳐로 드랍한다.
-    	9.  통계적으로 유의한 수준에서 Z-score > MSZA인 경우, 해당 피쳐를 중요한 변수로 둔다.
-    	10. 모든 피쳐들의 중요성이 결정되거나 최대 반복 회수에 도달할 때까지 Step 5부터 반복한다.
+
+{% highlight r linenos %}
+모든 피쳐들을 복사해서 새로운 칼럼을 생성한다.
+복사한 피쳐들 (섀도우 피쳐) 각각을 따로 섞는다.
+섀도우 피쳐들에 대해서 랜덤 포레스트를 실행하고, Z score를 얻는다.
+얻은 Z score 중에서 최댓값인 MSZA를 찾는다. (MSZA, Max Z-score among shadow attributes)
+기존 피쳐들에 대해서 랜덤 포레스트를 실행하여 Z score를 얻는다.
+각각의 기존 피쳐들에 대해서 Z-score > MSZA 인 경우 히트 수를 올린다.
+Z-score <= MSZA인 경우, MSZA에 대해서 two-side equality test를 수행한다.
+통계적으로 유의한 수준에서 Z-score < MSZA인 경우, 해당 피쳐를 중요하지 않은 피쳐로 드랍한다.
+통계적으로 유의한 수준에서 Z-score > MSZA인 경우, 해당 피쳐를 중요한 변수로 둔다.
+모든 피쳐들의 중요성이 결정되거나 최대 반복 회수에 도달할 때까지 Step 5부터 반복한다.
+{% endhighlight %}
+
+
+    	
 	
 
 -	Boruta 알고리즘의 시간 복잡도는 $O(P \cdot N)$이다.
