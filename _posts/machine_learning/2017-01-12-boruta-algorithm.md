@@ -13,7 +13,6 @@ categories: machine-learning
 
 
 ## Feature Selection with the `Boruta` Package (Kursa, M. and Rudnicki, W., 2010)
-==============================================================================
 
 ### 1. Introduction
 
