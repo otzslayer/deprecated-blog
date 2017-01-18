@@ -377,7 +377,7 @@ str(bc_data_3)
  $ symmetry_largest_worst         : num  0.268 0.46 0.433 0.664 0.236 ...
  $ fractal_dimension_largest_worst: num  0.0811 0.1189 0.0907 0.173 0.0768 ...
  $ tumor_size                     : num  5 3 2.5 2 3.5 2.5 1.5 4 2 6 ...
- $ lymph_node_status              : num  5 2 0 0 0 0 0 10 1 20 ...
+ $ lymph_node_status              : num  5 2 0 0 0 0 2 10 1 20 ...
 {% endhighlight %}
 
 ### Principal Component Analysis (PCA)
@@ -471,7 +471,7 @@ p2 <- pca_func(data = bc_data[, 2:10],
 grid.arrange(p1, p2, ncol = 2)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -481,7 +481,7 @@ h_1 <- hclust(dist(t(bc_data[, 2:10]),
 plot(h_1)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -498,7 +498,7 @@ ggplot(data = bc_data_gather,
     facet_wrap( ~ measure, scales = "free_y", ncol = 3)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" width="1008" style="display: block; margin: auto;" />
 
 ##### Dataset 2
 
@@ -514,7 +514,7 @@ p2 <- pca_func(data = bc_data_2[, 3:32],
 grid.arrange(p1, p2, ncol = 2, widths = c(0.4, 0.6))
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -524,7 +524,7 @@ h_2 <- hclust(dist(t(bc_data_2[, 3:32]),
 plot(h_2)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -539,7 +539,7 @@ ggplot(data = bc_data_2_gather, aes(x = value, fill = diagnosis, color = diagnos
     facet_wrap( ~ measure, scales = "free_y", ncol = 3)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="1008" style="display: block; margin: auto;" />
 
 ##### Dataset 3
 
@@ -555,7 +555,7 @@ p2 <- pca_func(data = bc_data_3[, 2:34],
 grid.arrange(p1, p2, ncol = 2, widths = c(0.4, 0.6))
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -565,7 +565,7 @@ h_3 <- hclust(dist(t(bc_data_3[,2:34]),
 plot(h_3)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="1008" style="display: block; margin: auto;" />
 
 데이터셋 1과 데이터셋 2는 양성과 음성을 잘 분류한다. 또한 해당 변수들에 기반을 둔 모델은 클래스 예측 성능이 좋을 것으로 보인다. 하지만 데이터셋 3은 서로 다른 그룹으로 군집화하지 못하는데, 이는 해당 변수들을 사용했을 때 예측 성능이 떨어질 것으로 예상된다.
 
@@ -584,7 +584,7 @@ ggplot(data = bc_data_3_gather, aes(x = value, fill = outcome, color = outcome))
     facet_wrap( ~ measure, scales = "free_y", ncol = 3)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="1008" style="display: block; margin: auto;" />
 
 ### Feature importance
 
@@ -733,7 +733,7 @@ corMatMy <- cor(bc_data_train[, -1])
 corrplot(corMatMy, order = "hclust")
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -748,10 +748,10 @@ Compare row 2  and column  3 with corr  0.913
   Means:  0.715 vs 0.601 so flagging column 2 
 Compare row 3  and column  7 with corr  0.725 
   Means:  0.677 vs 0.578 so flagging column 3 
-Compare row 7  and column  6 with corr  0.705 
+Compare row 7  and column  6 with corr  0.704 
   Means:  0.6 vs 0.544 so flagging column 7 
-Compare row 6  and column  4 with corr  0.715 
-  Means:  0.577 vs 0.525 so flagging column 6 
+Compare row 6  and column  4 with corr  0.717 
+  Means:  0.578 vs 0.525 so flagging column 6 
 All correlations <= 0.7 
 {% endhighlight %}
 
@@ -782,7 +782,7 @@ corMatMy <- cor(bc_data_2_train[, 3:32])
 corrplot(corMatMy, order = "hclust")
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-32-1.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-32-1.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -868,7 +868,7 @@ corMatMy <- cor(bc_data_3_train[, -1])
 corrplot(corMatMy, order = "hclust")
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-36-1.png" title="plot of chunk unnamed-chunk-36" alt="plot of chunk unnamed-chunk-36" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-36-1.png" title="plot of chunk unnamed-chunk-36" alt="plot of chunk unnamed-chunk-36" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -883,7 +883,7 @@ Compare row 8  and column  9 with corr  0.898
 Compare row 9  and column  7 with corr  0.714 
   Means:  0.39 vs 0.277 so flagging column 9 
 Compare row 7  and column  29 with corr  0.753 
-  Means:  0.364 vs 0.271 so flagging column 7 
+  Means:  0.363 vs 0.271 so flagging column 7 
 Compare row 4  and column  2 with corr  0.996 
   Means:  0.348 vs 0.264 so flagging column 4 
 Compare row 2  and column  5 with corr  0.993 
@@ -905,13 +905,13 @@ Compare row 31  and column  28 with corr  0.71
 Compare row 18  and column  17 with corr  0.812 
   Means:  0.331 vs 0.229 so flagging column 18 
 Compare row 28  and column  27 with corr  0.84 
-  Means:  0.286 vs 0.219 so flagging column 28 
+  Means:  0.285 vs 0.219 so flagging column 28 
 Compare row 17  and column  21 with corr  0.839 
   Means:  0.285 vs 0.212 so flagging column 17 
 Compare row 10  and column  30 with corr  0.766 
   Means:  0.277 vs 0.204 so flagging column 10 
 Compare row 6  and column  26 with corr  0.754 
-  Means:  0.235 vs 0.198 so flagging column 6 
+  Means:  0.234 vs 0.198 so flagging column 6 
 Compare row 3  and column  23 with corr  0.858 
   Means:  0.164 vs 0.195 so flagging column 23 
 All correlations <= 0.7 
@@ -964,10 +964,10 @@ predictors(results_1)
 
 
 {% highlight text %}
-[1] "bare_nuclei"              "uniformity_of_cell_size" 
-[3] "clump_thickness"          "uniformity_of_cell_shape"
-[5] "bland_chromatin"          "marginal_adhesion"       
-[7] "normal_nucleoli"          "mitosis"                 
+[1] "bare_nuclei"                 "uniformity_of_cell_size"    
+[3] "clump_thickness"             "uniformity_of_cell_shape"   
+[5] "bland_chromatin"             "marginal_adhesion"          
+[7] "mitosis"                     "single_epithelial_cell_size"
 {% endhighlight %}
 
 
@@ -992,9 +992,12 @@ predictors(results_2)
  [1] "perimeter_largest_worst"      "area_largest_worst"          
  [3] "radius_largest_worst"         "concave_points_largest_worst"
  [5] "concave_points_mean"          "texture_largest_worst"       
- [7] "area_se"                      "texture_mean"                
+ [7] "texture_mean"                 "area_se"                     
  [9] "concavity_largest_worst"      "concavity_mean"              
-[11] "area_mean"                   
+[11] "area_mean"                    "radius_se"                   
+[13] "perimeter_mean"               "radius_mean"                 
+[15] "perimeter_se"                 "compactness_largest_worst"   
+[17] "smoothness_largest_worst"     "symmetry_largest_worst"      
 {% endhighlight %}
 
 
@@ -1015,19 +1018,11 @@ predictors(results_3)
 
 
 {% highlight text %}
- [1] "time"                            "lymph_node_status"              
- [3] "symmetry_mean"                   "smoothness_largest_worst"       
- [5] "concave_points_se"               "perimeter_se"                   
- [7] "texture_se"                      "compactness_mean"               
- [9] "concave_points_largest_worst"    "concavity_se"                   
-[11] "symmetry_largest_worst"          "concavity_largest_worst"        
-[13] "smoothness_mean"                 "fractal_dimension_largest_worst"
-[15] "tumor_size"                      "compactness_largest_worst"      
-[17] "concave_points_mean"             "concavity_mean"                 
-[19] "fractal_dimension_mean"          "texture_largest_worst"          
-[21] "radius_se"                       "symmetry_se"                    
-[23] "perimeter_largest_worst"         "radius_largest_worst"           
-[25] "area_se"                        
+ [1] "time"                     "lymph_node_status"       
+ [3] "concavity_se"             "symmetry_mean"           
+ [5] "smoothness_largest_worst" "perimeter_se"            
+ [7] "concave_points_se"        "radius_se"               
+ [9] "texture_se"               "tumor_size"              
 {% endhighlight %}
 
 
@@ -1186,7 +1181,7 @@ bor_1
 
 
 {% highlight text %}
-Boruta performed 10 iterations in 0.937906 secs.
+Boruta performed 10 iterations in 0.9384539 secs.
  9 attributes confirmed important: bare_nuclei, bland_chromatin,
 clump_thickness, marginal_adhesion, mitosis and 4 more.
  No attributes deemed unimportant.
@@ -1197,7 +1192,7 @@ clump_thickness, marginal_adhesion, mitosis and 4 more.
 plot(bor_1)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-57-1.png" title="plot of chunk unnamed-chunk-57" alt="plot of chunk unnamed-chunk-57" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-57-1.png" title="plot of chunk unnamed-chunk-57" alt="plot of chunk unnamed-chunk-57" width="1008" style="display: block; margin: auto;" />
 
 
 
@@ -1217,7 +1212,7 @@ bor_2
 
 
 {% highlight text %}
-Boruta performed 99 iterations in 18.61058 secs.
+Boruta performed 99 iterations in 19.23794 secs.
  26 attributes confirmed important: area_largest_worst, area_mean,
 area_se, compactness_largest_worst, compactness_mean and 21 more.
  3 attributes confirmed unimportant: smoothness_se, symmetry_se,
@@ -1230,7 +1225,7 @@ texture_se.
 plot(bor_2)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-60-1.png" title="plot of chunk unnamed-chunk-60" alt="plot of chunk unnamed-chunk-60" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-60-1.png" title="plot of chunk unnamed-chunk-60" alt="plot of chunk unnamed-chunk-60" width="1008" style="display: block; margin: auto;" />
 
 
 
@@ -1250,12 +1245,12 @@ bor_3
 
 
 {% highlight text %}
-Boruta performed 499 iterations in 19.98457 secs.
- 2 attributes confirmed important: lymph_node_status, time.
+Boruta performed 137 iterations in 5.972953 secs.
+ 3 attributes confirmed important: lymph_node_status, texture_se,
+time.
  30 attributes confirmed unimportant: area_largest_worst,
 area_mean, area_se, compactness_largest_worst, compactness_mean
 and 25 more.
- 1 tentative attributes left: concave_points_se.
 {% endhighlight %}
 
 
@@ -1263,7 +1258,7 @@ and 25 more.
 plot(bor_3)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-63-1.png" title="plot of chunk unnamed-chunk-63" alt="plot of chunk unnamed-chunk-63" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-63-1.png" title="plot of chunk unnamed-chunk-63" alt="plot of chunk unnamed-chunk-63" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -1398,25 +1393,25 @@ Confusion Matrix and Statistics
 
           Reference
 Prediction  N  R
-         N 42  7
-         R  3  7
+         N 41  7
+         R  4  7
                                           
-               Accuracy : 0.8305          
-                 95% CI : (0.7103, 0.9156)
+               Accuracy : 0.8136          
+                 95% CI : (0.6909, 0.9031)
     No Information Rate : 0.7627          
-    P-Value [Acc > NIR] : 0.1408          
+    P-Value [Acc > NIR] : 0.2256          
                                           
-                  Kappa : 0.4806          
- Mcnemar's Test P-Value : 0.3428          
+                  Kappa : 0.4439          
+ Mcnemar's Test P-Value : 0.5465          
                                           
-            Sensitivity : 0.9333          
+            Sensitivity : 0.9111          
             Specificity : 0.5000          
-         Pos Pred Value : 0.8571          
-         Neg Pred Value : 0.7000          
+         Pos Pred Value : 0.8542          
+         Neg Pred Value : 0.6364          
              Prevalence : 0.7627          
-         Detection Rate : 0.7119          
-   Detection Prevalence : 0.8305          
-      Balanced Accuracy : 0.7167          
+         Detection Rate : 0.6949          
+   Detection Prevalence : 0.8136          
+      Balanced Accuracy : 0.7056          
                                           
        'Positive' Class : N               
                                           
@@ -1495,25 +1490,25 @@ Confusion Matrix and Statistics
 
            Reference
 Prediction  benign malignant
-  benign       134         4
-  malignant      3        68
+  benign       134         6
+  malignant      3        66
                                           
-               Accuracy : 0.9665          
-                 95% CI : (0.9322, 0.9864)
+               Accuracy : 0.9569          
+                 95% CI : (0.9198, 0.9801)
     No Information Rate : 0.6555          
     P-Value [Acc > NIR] : <2e-16          
                                           
-                  Kappa : 0.9256          
- Mcnemar's Test P-Value : 1               
+                  Kappa : 0.9037          
+ Mcnemar's Test P-Value : 0.505           
                                           
             Sensitivity : 0.9781          
-            Specificity : 0.9444          
-         Pos Pred Value : 0.9710          
-         Neg Pred Value : 0.9577          
+            Specificity : 0.9167          
+         Pos Pred Value : 0.9571          
+         Neg Pred Value : 0.9565          
              Prevalence : 0.6555          
          Detection Rate : 0.6411          
-   Detection Prevalence : 0.6603          
-      Balanced Accuracy : 0.9613          
+   Detection Prevalence : 0.6699          
+      Balanced Accuracy : 0.9474          
                                           
        'Positive' Class : benign          
                                           
@@ -1682,28 +1677,28 @@ Confusion Matrix and Statistics
 
           Reference
 Prediction   B   M
-         B 105   5
-         M   2  58
-                                         
-               Accuracy : 0.9588         
-                 95% CI : (0.917, 0.9833)
-    No Information Rate : 0.6294         
-    P-Value [Acc > NIR] : <2e-16         
-                                         
-                  Kappa : 0.9109         
- Mcnemar's Test P-Value : 0.4497         
-                                         
-            Sensitivity : 0.9813         
-            Specificity : 0.9206         
-         Pos Pred Value : 0.9545         
-         Neg Pred Value : 0.9667         
-             Prevalence : 0.6294         
-         Detection Rate : 0.6176         
-   Detection Prevalence : 0.6471         
-      Balanced Accuracy : 0.9510         
-                                         
-       'Positive' Class : B              
-                                         
+         B 107   5
+         M   0  58
+                                          
+               Accuracy : 0.9706          
+                 95% CI : (0.9327, 0.9904)
+    No Information Rate : 0.6294          
+    P-Value [Acc > NIR] : < 2e-16         
+                                          
+                  Kappa : 0.9359          
+ Mcnemar's Test P-Value : 0.07364         
+                                          
+            Sensitivity : 1.0000          
+            Specificity : 0.9206          
+         Pos Pred Value : 0.9554          
+         Neg Pred Value : 1.0000          
+             Prevalence : 0.6294          
+         Detection Rate : 0.6294          
+   Detection Prevalence : 0.6588          
+      Balanced Accuracy : 0.9603          
+                                          
+       'Positive' Class : B               
+                                          
 {% endhighlight %}
 
 - GA
@@ -1822,25 +1817,25 @@ Confusion Matrix and Statistics
 
           Reference
 Prediction  N  R
-         N 41  7
-         R  4  7
+         N 39  7
+         R  6  7
                                           
-               Accuracy : 0.8136          
-                 95% CI : (0.6909, 0.9031)
+               Accuracy : 0.7797          
+                 95% CI : (0.6527, 0.8771)
     No Information Rate : 0.7627          
-    P-Value [Acc > NIR] : 0.2256          
+    P-Value [Acc > NIR] : 0.4498          
                                           
-                  Kappa : 0.4439          
- Mcnemar's Test P-Value : 0.5465          
+                  Kappa : 0.3759          
+ Mcnemar's Test P-Value : 1.0000          
                                           
-            Sensitivity : 0.9111          
+            Sensitivity : 0.8667          
             Specificity : 0.5000          
-         Pos Pred Value : 0.8542          
-         Neg Pred Value : 0.6364          
+         Pos Pred Value : 0.8478          
+         Neg Pred Value : 0.5385          
              Prevalence : 0.7627          
-         Detection Rate : 0.6949          
-   Detection Prevalence : 0.8136          
-      Balanced Accuracy : 0.7056          
+         Detection Rate : 0.6610          
+   Detection Prevalence : 0.7797          
+      Balanced Accuracy : 0.6833          
                                           
        'Positive' Class : N               
                                           
@@ -1868,25 +1863,25 @@ Confusion Matrix and Statistics
 
           Reference
 Prediction  N  R
-         N 43  7
-         R  2  7
+         N 39  7
+         R  6  7
                                           
-               Accuracy : 0.8475          
-                 95% CI : (0.7301, 0.9278)
+               Accuracy : 0.7797          
+                 95% CI : (0.6527, 0.8771)
     No Information Rate : 0.7627          
-    P-Value [Acc > NIR] : 0.07964         
+    P-Value [Acc > NIR] : 0.4498          
                                           
-                  Kappa : 0.5195          
- Mcnemar's Test P-Value : 0.18242         
+                  Kappa : 0.3759          
+ Mcnemar's Test P-Value : 1.0000          
                                           
-            Sensitivity : 0.9556          
+            Sensitivity : 0.8667          
             Specificity : 0.5000          
-         Pos Pred Value : 0.8600          
-         Neg Pred Value : 0.7778          
+         Pos Pred Value : 0.8478          
+         Neg Pred Value : 0.5385          
              Prevalence : 0.7627          
-         Detection Rate : 0.7288          
-   Detection Prevalence : 0.8475          
-      Balanced Accuracy : 0.7278          
+         Detection Rate : 0.6610          
+   Detection Prevalence : 0.7797          
+      Balanced Accuracy : 0.6833          
                                           
        'Positive' Class : N               
                                           
@@ -1913,25 +1908,25 @@ Confusion Matrix and Statistics
 
           Reference
 Prediction  N  R
-         N 39  6
-         R  6  8
+         N 39  7
+         R  6  7
                                           
-               Accuracy : 0.7966          
-                 95% CI : (0.6717, 0.8902)
+               Accuracy : 0.7797          
+                 95% CI : (0.6527, 0.8771)
     No Information Rate : 0.7627          
-    P-Value [Acc > NIR] : 0.3311          
+    P-Value [Acc > NIR] : 0.4498          
                                           
-                  Kappa : 0.4381          
+                  Kappa : 0.3759          
  Mcnemar's Test P-Value : 1.0000          
                                           
             Sensitivity : 0.8667          
-            Specificity : 0.5714          
-         Pos Pred Value : 0.8667          
-         Neg Pred Value : 0.5714          
+            Specificity : 0.5000          
+         Pos Pred Value : 0.8478          
+         Neg Pred Value : 0.5385          
              Prevalence : 0.7627          
          Detection Rate : 0.6610          
-   Detection Prevalence : 0.7627          
-      Balanced Accuracy : 0.7190          
+   Detection Prevalence : 0.7797          
+      Balanced Accuracy : 0.6833          
                                           
        'Positive' Class : N               
                                           
@@ -1952,7 +1947,7 @@ model_bc_data_3_bor <- train(outcome ~ .,
 
 
 {% highlight text %}
-note: only 1 unique complexity parameters in default grid. Truncating the grid to 1 .
+note: only 2 unique complexity parameters in default grid. Truncating the grid to 2 .
 {% endhighlight %}
 
 
@@ -1969,25 +1964,25 @@ Confusion Matrix and Statistics
 
           Reference
 Prediction  N  R
-         N 34 10
-         R 11  4
+         N 37  8
+         R  8  6
                                           
-               Accuracy : 0.6441          
-                 95% CI : (0.5087, 0.7645)
+               Accuracy : 0.7288          
+                 95% CI : (0.5973, 0.8364)
     No Information Rate : 0.7627          
-    P-Value [Acc > NIR] : 0.9864          
+    P-Value [Acc > NIR] : 0.7812          
                                           
-                  Kappa : 0.0403          
+                  Kappa : 0.2508          
  Mcnemar's Test P-Value : 1.0000          
                                           
-            Sensitivity : 0.7556          
-            Specificity : 0.2857          
-         Pos Pred Value : 0.7727          
-         Neg Pred Value : 0.2667          
+            Sensitivity : 0.8222          
+            Specificity : 0.4286          
+         Pos Pred Value : 0.8222          
+         Neg Pred Value : 0.4286          
              Prevalence : 0.7627          
-         Detection Rate : 0.5763          
-   Detection Prevalence : 0.7458          
-      Balanced Accuracy : 0.5206          
+         Detection Rate : 0.6271          
+   Detection Prevalence : 0.7627          
+      Balanced Accuracy : 0.6254          
                                           
        'Positive' Class : N               
                                           
@@ -2073,7 +2068,7 @@ ggplot(overall_byClass_gather, aes(x = model, y = value, color = measure, shape 
     )
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-85-1.png" title="plot of chunk unnamed-chunk-85" alt="plot of chunk unnamed-chunk-85" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-85-1.png" title="plot of chunk unnamed-chunk-85" alt="plot of chunk unnamed-chunk-85" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -2099,7 +2094,7 @@ ggplot(overall_byClass_gather, aes(x = measure, y = value, color = model, shape 
     )
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-86-1.png" title="plot of chunk unnamed-chunk-86" alt="plot of chunk unnamed-chunk-86" width="864" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-16-feature-selection/unnamed-chunk-86-1.png" title="plot of chunk unnamed-chunk-86" alt="plot of chunk unnamed-chunk-86" width="1008" style="display: block; margin: auto;" />
 
 ### Conclusions
 
