@@ -1,0 +1,1167 @@
+---
+title: "[번역] Feature Selection in Machine Learning"
+author: "Jaeyoon Han"
+date: "`r Sys.Date()`"
+output: html_document
+layout: post
+image: /assets/article_images/2017-01-16-feature-selection/title.png
+categories: machine-learning
+---
+
+
+```{r setup, include=FALSE}
+library(knitr)
+library(rmdformats)
+library(ggplot2)
+library(dplyr)
+library(ggthemr)
+library(printr)
+
+options(scipen = 10)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	fig.align = "center",
+	fig.height = 7,
+	fig.width = 12,
+	fig.retina = 2,
+	message = FALSE,
+	warning = FALSE,
+	comment = NA,
+	prompt = FALSE,
+	tidy = FALSE,
+	cache = TRUE
+)
+custom_theme <- theme_bw(base_size = 11, base_family = "sans") +
+    theme(
+        axis.title.x = element_text(face = "bold"),
+        axis.title.y = element_text(face = "bold"),
+        plot.title = element_text(face = "bold", size = 14),
+        panel.background = element_blank(),
+        axis.text.x = element_text(angle = 0,
+                                   vjust = .1),
+        axis.text.y = element_text(face = "italic"),
+        legend.position = "right",
+        strip.text = element_text(face = "bold",
+                                  size = 12),
+        legend.justification = "top", 
+        legend.title = element_text(size = 9, face = 'bold.italic')
+    )
+theme_set(custom_theme)
+```
+
+## Feature Selection in Machine Learning (Breast Cancer Datasets)
+
+### 번역에 앞서.
+
+이번 포스트는 최근 관심을 가지고 있는 Feature selection과 관련된 내용을 담고 있다. 완벽한 번역보다는 아티클을 보고 정리한 내용들을 거칠게 정리하려고 한다. 자세한 내용은 [원문 포스트](https://shiring.github.io/machine_learning/2017/01/15/rfe_ga_post) 참고하길 바란다.
+
+### Introduction
+
+머신러닝은 예측 모델을 생성하기 위해서 변수(features, 또는 variables, attributes)를 사용한다. 높은 정확도를 얻기 위해서는 적절한 변수들의 조합을 사용하는 것이 필수적이다. (불명확한) 변수들을 사용하면 모델이 과적합되는 문제가 발생하기 때문에, 일반적으로 예측하고자 하는 반응변수와 가장 연관성이 높은 변수들을 찾아서 모델에 사용하길 원한다. 가능한한 적은 수의 변수를 사용하면 모델의 복잡도(complexity)를 낮출 수 있다. 다시 말해서 모델을 실행하는 시간과 컴퓨팅 파워 요구량을 줄이고, 이해하기도 쉬워진다는 의미다.
+
+모델에 대해서 각각의 변수가 기여하는 정도를 측정하고, 변수의 수를 정하는 방법은 여러 가지가 있다. 본 아티클에서는 랜덤 포레스트 모델에 대해서 다음의 기법을 사용한다.
+
+- 상관계수 (Correlation),
+- 재귀 변수 제거법 (Recursive Feature Elimination),
+- 유전 알고리즘 (Genetic Algorithm, GA)
+- 보루타 알고리즘 (Boruta Algorithm, BA) [역자 주: 원문 포스트에는 없고 테스트를 위해서 추가했다.]
+
+추가적으로, 데이터의 특성이 다를 때 위의 변수 선택 기법이 어떤 영향을 미치는지 확인하기 위해서 세 가지의 유방암 관련 데이터셋을 사용하였다. 하나는 매우 적은 수의 변수를 가지고 있으며, 다른 두 개의 데이터는 매우 큰 데이터지만, PCA를 이용해서 결과 클러스터를 다르게 하였다.
+
+상관계수 기법, RFE, GA를 비교한 결과에 따르면, 랜덤 포레스트에 대해서 다음의 결과를 얻었다.
+
+- 상관계수가 높은 변수를 제거하는 것이 일반적으로 적절한 기법은 아니다.
+- GA가 본 예제에서는 최상의 결과를 보여줬지만, 다양한 변수가 있는 사례에서는 실용적이지 못하다. 적절한 세대(generation)까지 모델을 실행하는 데 오랜 시간이 걸리기 때문이다.
+- 시작부터 좋은 분류 결과가 나오기 힘든 데이터는 변수 선택에서 큰 효과를 보기 어렵다.
+
+이 결론들은 물론 모든 데이터에 대해 일반화할 수는 없다. 위 기법들 이외에도 다양한 변수 선택 기법이 있으며, 굉장히 제한된 데이터셋에 대해서만 비교분석 하였으며, 랜덤 포레스트 모델에 대한 영향력만 분석했다. 하지만 작은 예제로도 서로 다른 변수와 파라미터가 예측 결과에 어떻게 영향을 미치는지 충분히 보여주고 있다는 점이 중요하다. 머신러닝에서는 이른바 "만능(one size fits all)"은 존재하지 않는다. 데이터를 유심히 살펴보는 것은 항상 가치있는 일이고, 모델이나 알고리즘에 대해서 생각하기 전에 데이터의 특징들에 익숙해지는 것이 중요하다. 주어진 데이터에 대해서 무언가 감을 잡았다면, 서로 다른 변수 선택 기법(또는 생성한 변수들), 모델, 파라미터들을 비교해보는 데에 시간을 투자하고, 마지막으로 다양한 머신러닝 알고리즘을 비교해보는 것이 큰 차이를 만들어낼 수 있다.
+
+### Breast Cancer Wisconsin (Diagnostic) Dataset
+
+변수 선택 기법을 비교하기 위해 사용할 데이터는 Breast Cancer Wisconsin (Diagnostic) 데이터셋이다.
+
+> W.N. Street, W.H. Wolberg and O.L. Mangasarian. Nuclear feature extraction for breast tumor diagnosis. IS&T/SPIE 1993 International Symposium on Electronic Imaging: Science and Technology, volume 1905, pages 861-870, San Jose, CA, 1993.
+
+> O.L. Mangasarian, W.N. Street and W.H. Wolberg. Breast cancer diagnosis and prognosis via linear programming. Operations Research, 43(4), pages 570-577, July-August 1995.
+
+> W.H. Wolberg, W.N. Street, and O.L. Mangasarian. Machine learning techniques to diagnose breast cancer from fine-needle aspirates. Cancer Letters 77 (1994) 163-171.
+
+> W.H. Wolberg, W.N. Street, and O.L. Mangasarian. Image analysis and machine learning applied to breast cancer diagnosis and prognosis. Analytical and Quantitative Cytology and Histology, Vol. 17 No. 2, pages 77-87, April 1995.
+
+> W.H. Wolberg, W.N. Street, D.M. Heisey, and O.L. Mangasarian. Computerized breast cancer diagnosis and prognosis from fine needle aspirates. Archives of Surgery 1995;130:511-516.
+
+> W.H. Wolberg, W.N. Street, D.M. Heisey, and O.L. Mangasarian. Computer-derived nuclear features distinguish malignant from benign breast cytology. Human Pathology, 26:792–796, 1995.
+
+데이터는 [UC Irvine Machine Learning Repository](http://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Diagnostic%29)에서 다운로드했다. 데이터셋의 변수들은 세포핵의 특성을 담고 있으며, 유방 세포 덩어리 세침흡인검사의 이미지 분석으로 생성되었다.
+
+총 세 개의 데이터셋을 포함하고 있다. 첫번째 데이터셋은 아홉 개의 변수만 사용하고 있는 작은 데이터이며, 다른 두 개의 데이터는 각각 30개와 33개의 변수를 포함하고 있다. 두 데이터는 PCA로 생성되는 클러스터가 서로 다르다. 서로 다른 특성을 가지고 있는 데이터셋을 이용해서 서로 다른 변수 선택 기법의 효과를 살펴보고자 한다.
+
+##### Breast Cancer Dataset 1
+
+반응변수의 클래스는 다음과 같다.
+
+- Malignant (악성)
+- Benign (양성).
+
+세포 특징에 관한 표현형은 다음과 같다.
+
+- Sample ID (code number)
+- Clump thickness
+- Uniformity of cell size
+- Uniformity of cell shape
+- Marginal adhesion
+- Single epithelial cell size
+- Number of bare nuclei
+- Bland chromatin
+- Number of normal nuclei
+- Mitosis
+- Classes, i.e. diagnosis
+
+결측값들은 `mice` 패키지를 이용해서 처리한다.
+
+```{r}
+bc_data <- read.table("data/breast/breast-cancer-wisconsin.data.txt",
+                      header = FALSE, sep = ",")
+colnames(bc_data) <- c("sample_code_number",
+                       "clump_thickness",
+                       "uniformity_of_cell_size",
+                       "uniformity_of_cell_shape",
+                       "marginal_adhesion", 
+                       "single_epithelial_cell_size", 
+                       "bare_nuclei", 
+                       "bland_chromatin", 
+                       "normal_nucleoli",
+                       "mitosis",
+                       "classes"
+)
+bc_data$classes <- ifelse(bc_data$classes == "2", "benign",
+                          ifelse(bc_data$classes == "4", "malignant", NA))
+bc_data[bc_data == "?"] <- NA
+
+# how many NAs are in the data
+length(which(is.na(bc_data)))
+```
+
+```{r}
+# impute missing data
+library(mice)
+
+bc_data[,2:10] <- apply(bc_data[, 2:10], 2, function(x) as.numeric(as.character(x)))
+dataset_impute <- mice(bc_data[, 2:10],  print = FALSE)
+bc_data <- cbind(bc_data[, 11, drop = FALSE], mice::complete(dataset_impute, 1))
+
+bc_data$classes <- as.factor(bc_data$classes)
+
+# how many benign and malignant cases are there?
+summary(bc_data$classes)
+```
+
+```{r}
+str(bc_data)
+```
+
+##### Breast Cancer Dataset 2
+
+두번째 데이터셋의 반응변수의 클래스는 동일하다.
+
+- Malignant (악성)
+- Benign (양성).
+
+데이터셋의 첫 두 칼럼은 다음과 같다.
+
+- Sample ID
+- Classes, i.e. diagnosis
+
+각 세포핵에 대해서, 다음 10개의 특징이 측정되어 있다.
+
+- Radius (mean of all distances from the center to points on the perimeter)
+- Texture (standard deviation of gray-scale values)
+- Perimeter
+- Area
+- Smoothness (local variation in radius lengths)
+- Compactness (perimeter^2 / area - 1.0)
+- Concavity (severity of concave portions of the contour)
+- Concave points (number of concave portions of the contour)
+- Symmetry
+- Fractal dimension (“coastline approximation” - 1)
+
+각각의 특징은 세 개의 기준을 측정되었다.
+
+- 평균
+- 표준편차
+- 가장 심각한 경우
+
+```{r}
+bc_data_2 <- read.table("data/breast/wdbc.data.txt",
+                        header = FALSE, sep = ",")
+
+phenotypes <- rep(c("radius",
+                    "texture",
+                    "perimeter",
+                    "area",
+                    "smoothness",
+                    "compactness",
+                    "concavity",
+                    "concave_points",
+                    "symmetry",
+                    "fractal_dimension"), 3)
+types <- rep(c("mean", "se", "largest_worst"), each = 10)
+
+colnames(bc_data_2) <- c("ID",
+                         "diagnosis",
+                         paste(phenotypes, types, sep = "_")
+)
+
+# how many NAs are in the data
+length(which(is.na(bc_data_2)))
+```
+
+```{r}
+# how many benign and malignant cases are there?
+summary(bc_data_2$diagnosis)
+```
+
+```{r}
+str(bc_data_2)
+```
+
+##### Breast Cancer Dataset 3
+
+세 번째 데이터셋의 반응변수의 클래스는 다음과 같다.
+
+- R: 재발
+- N: 재발하지 않음
+
+데이터셋의 첫 두 칼럼은 다음과 같다.
+
+- Sample ID
+- Classes, i.e. outcome
+
+각 세포핵에 대해서 두 번째 데이터셋과 동일한 특성과 측정기준으로 구성된 칼럼이 있으며, 추가적으로 다음의 칼럼이 있다.
+
+- Time (recurrence time if field 2 = R, disease-free time if field 2 = N)
+- Tumor size - diameter of the excised tumor in centimeters
+- Lymph node status - number of positive axillary lymph nodes observed at time of surgery
+
+```{r}
+bc_data_3 <- read.table("data/breast/wpbc.data.txt",
+                        header = FALSE, sep = ",")
+colnames(bc_data_3) <- c("ID",
+                         "outcome", 
+                         "time",
+                         paste(phenotypes, types, sep = "_"),
+                         "tumor_size",
+                         "lymph_node_status"
+)
+
+bc_data_3[bc_data_3 == "?"] <- NA
+
+# how many NAs are in the data
+length(which(is.na(bc_data_3)))
+```
+
+```{r}
+# impute missing data
+library(mice)
+
+bc_data_3[,3:35] <- apply(bc_data_3[,3:35], 2, function(x) as.numeric(as.character(x)))
+dataset_impute <- mice(bc_data_3[,3:35],  print = FALSE)
+bc_data_3 <- cbind(bc_data_3[, 2, drop = FALSE], mice::complete(dataset_impute, 1))
+
+# how many recurring and non-recurring cases are there?
+summary(bc_data_3$outcome)
+```
+
+```{r}
+str(bc_data_3)
+```
+
+### Principal Component Analysis (PCA)
+
+데이터셋의 차원과 분산에 대한 아이디어를 얻기 위해서, 데이터의 샘플과 변수에 대해서 PCA 플롯을 그리도록 한다. 첫 두 주성분(principal components, PCs)는 데이터 분산의 다수를 설명할 수 있는 두 주성분을 의미한다.
+
+```{r}
+# function for PCA plotting
+library(pcaGoPromoter)
+library(ellipse)
+
+pca_func <- function(data, groups, title, print_ellipse = TRUE) {
+    
+    # perform pca and extract scores
+    pcaOutput <- pca(data, printDropped = FALSE, scale = TRUE, center = TRUE)
+    pcaOutput2 <- as.data.frame(pcaOutput$scores)
+    
+    # define groups for plotting
+    pcaOutput2$groups <- groups
+    
+    # when plotting samples calculate ellipses for plotting (when plotting features, there are no replicates)
+    if (print_ellipse) {
+        
+        centroids <- aggregate(cbind(PC1, PC2) ~ groups, pcaOutput2, mean)
+        conf.rgn  <- do.call(rbind, lapply(unique(pcaOutput2$groups), function(t)
+            data.frame(groups = as.character(t),
+                       ellipse(cov(pcaOutput2[pcaOutput2$groups == t, 1:2]),
+                               centre = as.matrix(centroids[centroids$groups == t, 2:3]),
+                               level = 0.95),
+                       stringsAsFactors = FALSE)))
+        
+        plot <- ggplot(data = pcaOutput2, aes(x = PC1, y = PC2, group = groups, color = groups)) + 
+            geom_polygon(data = conf.rgn, aes(fill = groups), alpha = 0.2) +
+            geom_point(size = 2, alpha = 0.6) + 
+            scale_color_brewer(palette = "Set1") +
+            labs(title = title,
+                 color = "",
+                 fill = "",
+                 x = paste0("PC1: ", round(pcaOutput$pov[1], digits = 2), "% variance"),
+                 y = paste0("PC2: ", round(pcaOutput$pov[2], digits = 2), "% variance"))
+        
+    } else {
+        
+        # if there are fewer than 10 groups (e.g. the predictor classes) I want to have colors from RColorBrewer
+        if (length(unique(pcaOutput2$groups)) <= 10) {
+            
+            plot <- ggplot(data = pcaOutput2, aes(x = PC1, y = PC2, group = groups, color = groups)) + 
+                geom_point(size = 2, alpha = 0.6) + 
+                scale_color_brewer(palette = "Set1") +
+                labs(title = title,
+                     color = "",
+                     fill = "",
+                     x = paste0("PC1: ", round(pcaOutput$pov[1], digits = 2), "% variance"),
+                     y = paste0("PC2: ", round(pcaOutput$pov[2], digits = 2), "% variance"))
+            
+        } else {
+            
+            # otherwise use the default rainbow colors
+            plot <- ggplot(data = pcaOutput2, aes(x = PC1, y = PC2, group = groups, color = groups)) + 
+                geom_point(size = 2, alpha = 0.6) + 
+                labs(title = title,
+                     color = "",
+                     fill = "",
+                     x = paste0("PC1: ", round(pcaOutput$pov[1], digits = 2), "% variance"),
+                     y = paste0("PC2: ", round(pcaOutput$pov[2], digits = 2), "% variance"))
+            
+        }
+    }
+    
+    return(plot)
+    
+}
+
+library(gridExtra)
+library(grid)
+```
+
+##### Dataset 1
+
+```{r, 	fig.height = 4}
+p1 <- pca_func(data = t(bc_data[, 2:10]),
+               groups = as.character(bc_data$classes),
+               title = "Breast cancer dataset 1: Samples"
+)
+p2 <- pca_func(data = bc_data[, 2:10],
+               groups = as.character(colnames(bc_data[, 2:10])), 
+               title = "Breast cancer dataset 1: Features", 
+               print_ellipse = FALSE)
+grid.arrange(p1, p2, ncol = 2)
+```
+
+```{r}
+h_1 <- hclust(dist(t(bc_data[, 2:10]),
+                   method = "euclidean"),
+              method = "complete")
+plot(h_1)
+```
+
+```{r}
+library(tidyr)
+bc_data_gather <- bc_data %>%
+    gather(measure, value, clump_thickness:mitosis)
+
+ggplot(data = bc_data_gather,
+       aes(x = value, fill = classes, color = classes)) +
+    geom_density(alpha = 0.3, size = 1) +
+    geom_rug() +
+    scale_fill_brewer(palette = "Set1") +
+    scale_color_brewer(palette = "Set1") +
+    facet_wrap( ~ measure, scales = "free_y", ncol = 3)
+```
+
+##### Dataset 2
+
+```{r, 	fig.height = 4}
+p1 <- pca_func(data = t(bc_data_2[, 3:32]),
+               groups = as.character(bc_data_2$diagnosis),
+               title = "Breast cancer dataset 2: Samples")
+p2 <- pca_func(data = bc_data_2[, 3:32],
+               groups = as.character(colnames(bc_data_2[, 3:32])),
+               title = "Breast cancer dataset 2: Features",
+               print_ellipse = FALSE)
+grid.arrange(p1, p2, ncol = 2, widths = c(0.4, 0.6))
+```
+
+```{r}
+h_2 <- hclust(dist(t(bc_data_2[, 3:32]),
+                   method = "euclidean"),
+              method = "complete")
+plot(h_2)
+```
+
+```{r, fig.height = 10}
+bc_data_2_gather <- bc_data_2[, -1] %>%
+    gather(measure, value, radius_mean:fractal_dimension_largest_worst)
+
+ggplot(data = bc_data_2_gather, aes(x = value, fill = diagnosis, color = diagnosis)) +
+    geom_density(alpha = 0.3, size = 1) +
+    geom_rug() +
+    scale_fill_brewer(palette = "Set1") +
+    scale_color_brewer(palette = "Set1") +
+    facet_wrap( ~ measure, scales = "free_y", ncol = 3)
+```
+
+##### Dataset 3
+
+```{r, fig.height = 4}
+p1 <- pca_func(data = t(bc_data_3[, 2:34]),
+               groups = as.character(bc_data_3$outcome), 
+               title = "Breast cancer dataset 3: Samples")
+p2 <- pca_func(data = bc_data_3[, 2:34], 
+               groups = as.character(colnames(bc_data_3[, 2:34])),
+               title = "Breast cancer dataset 3: Features", 
+               print_ellipse = FALSE)
+grid.arrange(p1, p2, ncol = 2, widths = c(0.4, 0.6))
+```
+
+```{r}
+h_3 <- hclust(dist(t(bc_data_3[,2:34]),
+                   method = "euclidean"),
+              method = "complete")
+plot(h_3)
+```
+
+데이터셋 1과 데이터셋 2는 양성과 음성을 잘 분류한다. 또한 해당 변수들에 기반을 둔 모델은 클래스 예측 성능이 좋을 것으로 보인다. 하지만 데이터셋 3은 서로 다른 그룹으로 군집화하지 못하는데, 이는 해당 변수들을 사용했을 때 예측 성능이 떨어질 것으로 예상된다.
+
+데이터셋 2와 데이터셋 3의 변수들은 잘 구별되게 군집화되지 않는다. 많은 변수들이 유사한 패턴을 보이기 때문인 것으로 보인다. 따라서 세 개의 데이터셋에 대해서 적절한 변수 부분집합을 고르는 것은 서로 다른 효과를 보일 것으로 보인다.
+
+```{r, fig.height = 10}
+bc_data_3_gather <- bc_data_3 %>%
+    gather(measure, value, time:lymph_node_status)
+
+ggplot(data = bc_data_3_gather, aes(x = value, fill = outcome, color = outcome)) +
+    geom_density(alpha = 0.3, size = 1) +
+    geom_rug() +
+    scale_fill_brewer(palette = "Set1") +
+    scale_color_brewer(palette = "Set1") +
+    facet_wrap( ~ measure, scales = "free_y", ncol = 3)
+```
+
+### Feature importance
+
+변수 각각의 중요성에 대한 정보를 얻기 위해서 `caret` 패키지를 사용하여 랜덤 포레스트에 대해 10 x 10 CV를 수행하였다. 모델링을 위한 변수 선택을 위해 변수 중요성이 필요했다면, 완전한 데이터셋이 아닌 트레이닝 데이터에 CV를 수행하여야 한다. 하지만 데이터에 전체에 대한 정보를 얻고 싶었기 때문에 전체를 사용하였다. 
+
+```{r}
+library(caret)
+library(doMC)
+registerDoMC(cores = 4)
+
+# prepare training scheme
+control <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
+
+feature_imp <- function(model, title) {
+    
+    # estimate variable importance
+    importance <- varImp(model, scale = TRUE)
+    
+    # prepare dataframes for plotting
+    importance_df_1 <- importance$importance
+    importance_df_1$group <- rownames(importance_df_1)
+    
+    importance_df_2 <- importance_df_1
+    importance_df_2$Overall <- 0
+    
+    importance_df <- rbind(importance_df_1, importance_df_2)
+    
+    plot <- ggplot() +
+        geom_point(data = importance_df_1,
+                   aes(x = Overall, y = group, color = group),
+                   size = 2) +
+        geom_path(data = importance_df,
+                  aes(x = Overall, y = group,
+                      color = group, group = group), 
+                  size = 1) +
+        theme(legend.position = "none") +
+        labs(
+            x = "Importance",
+            y = "",
+            title = title,
+            subtitle = "Scaled feature importance",
+            caption = "\nDetermined with Random Forest and
+      repeated cross validation (10 repeats, 10 times)"
+        )
+    
+    return(plot)
+    
+}
+```
+
+```{r}
+# train the model
+set.seed(27)
+imp_1 <- train(classes ~ .,
+               data = bc_data,
+               method = "rf",
+               preProcess = c("scale", "center"),
+               trControl = control)
+p1 <- feature_imp(imp_1, title = "Breast cancer dataset 1")
+```
+
+```{r}
+set.seed(27)
+imp_2 <- train(diagnosis ~ .,
+               data = bc_data_2[, -1],
+               method = "rf",
+               preProcess = c("scale", "center"),
+               trControl = control)
+p2 <- feature_imp(imp_2, title = "Breast cancer dataset 2")
+```
+
+```{r}
+set.seed(27)
+imp_3 <- train(outcome ~ .,
+               data = bc_data_3,
+               method = "rf",
+               preProcess = c("scale", "center"),
+               trControl = control)
+p3 <- feature_imp(imp_3, title = "Breast cancer dataset 3")
+```
+
+```{r, fig.width = 13}
+grid.arrange(p1, p2, p3, ncol = 3, widths = c(0.3, 0.35, 0.35))
+```
+
+### Feature Selection
+
+이제 데이터에 대한 일반적인 정보들을 얻어냈으므로, 세 개의 데이터셋에 대해서 변수 선택 기법을 적용하고, 랜덤 포레스트 모델의 정확도에 어떤 영향을 미치는지 살펴보도록 하자.
+
+##### Creating train and test data
+
+데이터에 작업을 수행하기 전에 기존의 데이터셋을 트레이닝 데이터와 테스트 데이터로 나눠야 한다. 전체 데이터에 대해서 변수 선택을 수행하면 예측값에 대한 편향을 초래할 수 있으므로, 모든 모델링 프로세스를 트레이닝 데이터에만 수행하도록 한다.
+
+- Dataset 1
+```{r}
+set.seed(27)
+bc_data_index <- createDataPartition(bc_data$classes,
+                                     p = 0.7, list = FALSE)
+bc_data_train <- bc_data[bc_data_index, ]
+bc_data_test  <- bc_data[-bc_data_index, ]
+```
+
+- Dataset 2
+
+```{r}
+set.seed(27)
+bc_data_2_index <- createDataPartition(bc_data_2$diagnosis,
+                                       p = 0.7, list = FALSE)
+bc_data_2_train <- bc_data_2[bc_data_2_index, ]
+bc_data_2_test  <- bc_data_2[-bc_data_2_index, ]
+```
+
+- Dataset 3
+```{r}
+set.seed(27)
+bc_data_3_index <- createDataPartition(bc_data_3$outcome,
+                                       p = 0.7, list = FALSE)
+bc_data_3_train <- bc_data_3[bc_data_3_index, ]
+bc_data_3_test  <- bc_data_3[-bc_data_3_index, ]
+```
+
+### Correlation
+
+종종 우리는 높은 상관관계를 갖는 변수들을 마주하게 되고, 이 변수들은 필요 이상의 정보를 제공한다. 상관관계가 높은 변수를 제거함으로써 해당 변수에 포함된 정보들에 의한 예측값이 편향되는 것을 방지할 수 있다. 이런 점들은 우리가 특정 변수들의 생물학적/의학적 중요성에 대한 주장을 할 때, 중요 변수들은 결과물을 예측할 때 적절한 것이지, 인과관계를 설명하는 것이 아님을 인지해야 한다.
+
+모든 변수들 사이의 상관관계는 `corrplot` 패키지를 이용해서 계산하고 시각화한다. 그 후 0.7보다 높은 상관관계를 보이는 모든 변수를 삭제할 예정이다.
+
+- Dataset 1
+
+```{r}
+library(corrplot)
+
+# calculate correlation matrix
+corMatMy <- cor(bc_data_train[, -1])
+corrplot(corMatMy, order = "hclust")
+```
+
+```{r}
+#Apply correlation filter at 0.70,
+highlyCor <- colnames(bc_data_train[, -1])[findCorrelation(corMatMy, cutoff = 0.7, verbose = TRUE)]
+```
+
+```{r}
+# which variables are flagged for removal?
+highlyCor
+```
+
+```{r}
+#then we remove these variables
+bc_data_cor <- bc_data_train[, which(!colnames(bc_data_train) %in% highlyCor)]
+```
+
+- Dataset 2
+
+```{r}
+corMatMy <- cor(bc_data_2_train[, 3:32])
+corrplot(corMatMy, order = "hclust")
+```
+
+```{r}
+highlyCor <- colnames(bc_data_2_train[, 3:32])[findCorrelation(corMatMy, cutoff = 0.7, verbose = TRUE)]
+```
+
+```{r}
+highlyCor
+```
+
+```{r}
+bc_data_2_cor <- bc_data_2_train[, which(!colnames(bc_data_2_train) %in% highlyCor)]
+```
+
+- Dataset 3
+
+```{r}
+corMatMy <- cor(bc_data_3_train[, -1])
+corrplot(corMatMy, order = "hclust")
+```
+
+```{r}
+highlyCor <- colnames(bc_data_3_train[, -1])[findCorrelation(corMatMy, cutoff = 0.7, verbose = TRUE)]
+```
+
+```{r}
+highlyCor
+```
+
+```{r}
+bc_data_3_cor <- bc_data_3_train[, which(!colnames(bc_data_3_train) %in% highlyCor)]
+```
+
+### Recursive Feature Elimination (RFE)
+
+변수를 선택하는 다른 방법으로 재귀 변수 제거법(RFE)이 있다. RFE는 변수들의 조합을 테스트하기 위해 랜덤 포레스트 알고리즘을 사용하며, 각 케이스에 대해서 정확도 점수를 반환한다. 가장 높은 점수를 기록한 조합을 선택한다.
+
+- Dataset 1
+
+```{r}
+# ensure the results are repeatable
+set.seed(7)
+# define the control using a random forest selection function with cross validation
+control <- rfeControl(functions = rfFuncs, method = "cv", number = 10)
+
+# run the RFE algorithm
+results_1 <- rfe(x = bc_data_train[, -1], y = bc_data_train$classes, sizes = c(1:9), rfeControl = control)
+
+# chosen features
+predictors(results_1)
+```
+
+```{r}
+# subset the chosen features
+bc_data_rfe <- bc_data_train[, c(1, which(colnames(bc_data_train) %in% predictors(results_1)))]
+```
+
+- Dataset 2
+
+```{r}
+set.seed(7)
+results_2 <- rfe(x = bc_data_2_train[, -c(1, 2)], y = as.factor(bc_data_2_train$diagnosis), sizes = c(1:30), rfeControl = control)
+
+predictors(results_2)
+```
+
+```{r}
+bc_data_2_rfe <- bc_data_2_train[, c(2, which(colnames(bc_data_2_train) %in% predictors(results_2)))]
+```
+
+- Dataset 3
+
+```{r}
+set.seed(7)
+results_3 <- rfe(x = bc_data_3_train[,-1], y = as.factor(bc_data_3_train$outcome), sizes = c(1:33), rfeControl = control)
+
+predictors(results_3)
+```
+
+```{r}
+bc_data_3_rfe <- bc_data_3_train[, c(1, which(colnames(bc_data_3_train) %in% predictors(results_3)))]
+```
+
+### Genetic Algorithm (GA)
+
+유전 알고리즘은 자연 선택의 진화 이론에 근거하여 개발되었다. 
+
+```{r}
+library(dplyr)
+
+ga_ctrl <- gafsControl(functions = rfGA, # Assess fitness with RF
+                       method = "cv",    # 10 fold cross validation
+                       genParallel = TRUE, # Use parallel programming
+                       allowParallel = TRUE)
+```
+
+- Dataset 1
+
+```{r, fig.height = 5, fig.width = 5}
+lev <- c("malignant", "benign")     # Set the levels
+
+set.seed(27)
+model_1 <- gafs(x = bc_data_train[, -1], y = bc_data_train$classes,
+                   iters = 10, # generations of algorithm
+                   popSize = 5, # population size for each generation
+                   levels = lev,
+                   gafsControl = ga_ctrl)
+
+plot(model_1) # Plot mean fitness (AUC) by generation
+```
+
+```{r}
+model_1$ga$final
+```
+
+```{r}
+bc_data_ga <- bc_data_train[, c(1, which(colnames(bc_data_train) %in% model_1$ga$final))]
+```
+
+- Dataset 2
+
+```{r, fig.height = 5, fig.width = 5}
+lev <- c("M", "B")
+
+set.seed(27)
+model_2 <- gafs(x = bc_data_2_train[, -c(1, 2)], y = bc_data_2_train$diagnosis,
+                   iters = 10, # generations of algorithm
+                   popSize = 5, # population size for each generation
+                   levels = lev,
+                   gafsControl = ga_ctrl)
+
+plot(model_2)
+```
+
+```{r}
+model_2$ga$final
+```
+
+```{r}
+bc_data_2_ga <- bc_data_2_train[, c(2, which(colnames(bc_data_2_train) %in% model_2$ga$final))]
+```
+
+- Dataset 3
+
+```{r, fig.height = 5, fig.width = 5}
+lev <- c("R", "N")
+
+set.seed(27)
+model_3 <- gafs(x = bc_data_3_train[, -1], y = bc_data_3_train$outcome,
+                   iters = 10, # generations of algorithm
+                   popSize = 5, # population size for each generation
+                   levels = lev,
+                   gafsControl = ga_ctrl)
+plot(model_3)
+```
+
+```{r}
+model_3$ga$final
+```
+
+```{r}
+bc_data_3_ga <- bc_data_3_train[, c(1, which(colnames(bc_data_3_train) %in% model_3$ga$final))]
+```
+
+### Boruta Analysis
+
+- Dataset 1
+
+```{r}
+library(Boruta)
+
+set.seed(27)
+bor_1 <- Boruta(classes ~ ., data = bc_data_train)
+bor_1
+```
+
+```{r}
+plot(bor_1)
+```
+
+
+```{r}
+bc_data_bor <- bc_data_train[, c("classes", getSelectedAttributes(bor_1))]
+```
+
+- Dataset 2
+
+```{r}
+set.seed(27)
+bor_2 <- Boruta(diagnosis ~ ., data = bc_data_2_train[, -1])
+bor_2
+```
+
+```{r}
+plot(bor_2)
+```
+
+
+```{r}
+bc_data_2_bor <- bc_data_2_train[, c("diagnosis", getSelectedAttributes(bor_2))]
+```
+
+- Dataset 3
+
+```{r}
+set.seed(27)
+bor_3 <- Boruta(outcome ~ ., data = bc_data_3_train, maxRuns = 500)
+bor_3
+```
+
+```{r}
+plot(bor_3)
+```
+
+```{r}
+bc_data_3_bor <- bc_data_3_train[, c("outcome", getSelectedAttributes(bor_3))]
+```
+
+
+### Model comparison
+
+##### All features
+
+- Dataset 1
+
+```{r}
+set.seed(27)
+model_bc_data_all <- train(classes ~ .,
+                           data = bc_data_train,
+                           method = "rf",
+                           preProcess = c("scale", "center"),
+                           trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+```
+
+```{r}
+cm_all_1 <- confusionMatrix(predict(model_bc_data_all, bc_data_test[, -1]), bc_data_test$classes)
+cm_all_1
+```
+
+- Dataset 2
+
+```{r}
+set.seed(27)
+model_bc_data_2_all <- train(diagnosis ~ .,
+                           data = bc_data_2_train[, -1],
+                           method = "rf",
+                           preProcess = c("scale", "center"),
+                           trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+```
+
+```{r}
+cm_all_2 <- confusionMatrix(predict(model_bc_data_2_all, bc_data_2_test[, -c(1, 2)]), bc_data_2_test$diagnosis)
+cm_all_2
+```
+
+- Dataset 3
+
+```{r}
+set.seed(27)
+model_bc_data_3_all <- train(outcome ~ .,
+                           data = bc_data_3_train,
+                           method = "rf",
+                           preProcess = c("scale", "center"),
+                           trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+```
+
+```{r}
+cm_all_3 <- confusionMatrix(predict(model_bc_data_3_all, bc_data_3_test[, -1]), bc_data_3_test$outcome)
+cm_all_3
+```
+
+### Selected features
+
+##### Dataset 1
+
+- Correlation
+
+```{r}
+set.seed(27)
+model_bc_data_cor <- train(classes ~ .,
+                 data = bc_data_cor,
+                 method = "rf",
+                 preProcess = c("scale", "center"),
+                 trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+
+cm_cor_1 <- confusionMatrix(predict(model_bc_data_cor, bc_data_test[, -1]), bc_data_test$classes)
+
+cm_cor_1
+```
+
+- RFE
+
+```{r}
+set.seed(27)
+model_bc_data_rfe <- train(classes ~ .,
+                           data = bc_data_rfe,
+                           method = "rf",
+                           preProcess = c("scale", "center"),
+                           trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+
+cm_rfe_1 <- confusionMatrix(predict(model_bc_data_rfe, bc_data_test[, -1]), bc_data_test$classes)
+cm_rfe_1
+```
+
+- GA
+
+```{r}
+set.seed(27)
+model_bc_data_ga <- train(classes ~ .,
+                           data = bc_data_ga,
+                           method = "rf",
+                           preProcess = c("scale", "center"),
+                           trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+
+cm_ga_1 <- confusionMatrix(predict(model_bc_data_ga, bc_data_test[, -1]), bc_data_test$classes)
+cm_ga_1
+```
+
+- Boruta
+
+```{r}
+set.seed(27)
+model_bc_data_bor <- train(classes ~ .,
+                           data = bc_data_bor,
+                           method = "rf",
+                           preProcess = c("scale", "center"),
+                           trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+
+cm_bor_1 <- confusionMatrix(predict(model_bc_data_bor, bc_data_test[, -1]), bc_data_test$classes)
+cm_bor_1
+```
+
+##### Dataset 2
+
+- Correlation
+
+```{r}
+set.seed(27)
+model_bc_data_2_cor <- train(diagnosis ~ .,
+                           data = bc_data_2_cor[, -1],
+                           method = "rf",
+                           preProcess = c("scale", "center"),
+                           trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+
+cm_cor_2 <- confusionMatrix(predict(model_bc_data_2_cor, bc_data_2_test[, -c(1, 2)]), bc_data_2_test$diagnosis)
+
+cm_cor_2
+```
+
+- RFE
+
+```{r}
+set.seed(27)
+model_bc_data_2_rfe <- train(diagnosis ~ .,
+                           data = bc_data_2_rfe,
+                           method = "rf",
+                           preProcess = c("scale", "center"),
+                           trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+
+cm_rfe_2 <- confusionMatrix(predict(model_bc_data_2_rfe, bc_data_2_test[, -c(1, 2)]), bc_data_2_test$diagnosis)
+cm_rfe_2
+```
+
+- GA
+
+```{r}
+set.seed(27)
+model_bc_data_2_ga <- train(diagnosis ~ .,
+                          data = bc_data_2_ga,
+                          method = "rf",
+                          preProcess = c("scale", "center"),
+                          trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+
+cm_ga_2 <- confusionMatrix(predict(model_bc_data_2_ga, bc_data_2_test[, -c(1, 2)]), bc_data_2_test$diagnosis)
+cm_ga_2
+```
+
+- Boruta
+
+```{r}
+set.seed(27)
+model_bc_data_2_bor <- train(diagnosis ~ .,
+                          data = bc_data_2_bor,
+                          method = "rf",
+                          preProcess = c("scale", "center"),
+                          trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+
+cm_bor_2 <- confusionMatrix(predict(model_bc_data_2_bor, bc_data_2_test[, -c(1, 2)]), bc_data_2_test$diagnosis)
+cm_bor_2
+```
+
+##### Dataset 3
+
+- Correlation
+
+```{r}
+set.seed(27)
+model_bc_data_3_cor <- train(outcome ~ .,
+                           data = bc_data_3_cor,
+                           method = "rf",
+                           preProcess = c("scale", "center"),
+                           trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+
+cm_cor_3 <- confusionMatrix(predict(model_bc_data_3_cor, bc_data_3_test[, -1]), bc_data_3_test$outcome)
+cm_cor_3
+```
+
+- RFE
+
+```{r}
+set.seed(27)
+model_bc_data_3_rfe <- train(outcome ~ .,
+                           data = bc_data_3_rfe,
+                           method = "rf",
+                           preProcess = c("scale", "center"),
+                           trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+
+cm_rfe_3 <- confusionMatrix(predict(model_bc_data_3_rfe, bc_data_3_test[, -1]), bc_data_3_test$outcome)
+cm_rfe_3
+```
+
+- GA
+
+```{r}
+set.seed(27)
+model_bc_data_3_ga <- train(outcome ~ .,
+                          data = bc_data_3_ga,
+                          method = "rf",
+                          preProcess = c("scale", "center"),
+                          trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+cm_ga_3 <- confusionMatrix(predict(model_bc_data_3_ga, bc_data_3_test[, -1]), bc_data_3_test$outcome)
+cm_ga_3
+```
+
+- Boruta
+
+```{r}
+set.seed(27)
+model_bc_data_3_bor <- train(outcome ~ .,
+                          data = bc_data_3_bor,
+                          method = "rf",
+                          preProcess = c("scale", "center"),
+                          trControl = trainControl(method = "repeatedcv", number = 5, repeats = 10, verboseIter = FALSE))
+cm_bor_3 <- confusionMatrix(predict(model_bc_data_3_bor, bc_data_3_test[, -1]), bc_data_3_test$outcome)
+cm_bor_3
+```
+
+### Overall model parameters
+
+```{r}
+overall <- data.frame(dataset = rep(c("1", "2", "3"), each = 5),
+                      model = rep(c("all", "cor", "rfe", "ga", "bor"), 3),
+                      rbind(cm_all_1$overall,
+                      cm_cor_1$overall,
+                      cm_rfe_1$overall,
+                      cm_ga_1$overall,
+                      cm_bor_1$overall,
+                      cm_all_2$overall,
+                      cm_cor_2$overall,
+                      cm_rfe_2$overall,
+                      cm_ga_2$overall,
+                      cm_bor_2$overall,
+                      cm_all_3$overall,
+                      cm_cor_3$overall,
+                      cm_rfe_3$overall,
+                      cm_ga_3$overall,
+                      cm_bor_3$overall))
+
+library(tidyr)
+overall_gather <- overall[, 1:4] %>%
+  gather(measure, value, Accuracy:Kappa)
+```
+
+```{r}
+byClass <- data.frame(dataset = rep(c("1", "2", "3"), each = 5),
+                      model = rep(c("all", "cor", "rfe", "ga", "bor"), 3),
+                      rbind(cm_all_1$byClass,
+                      cm_cor_1$byClass,
+                      cm_rfe_1$byClass,
+                      cm_ga_1$byClass,
+                      cm_bor_1$byClass,
+                      cm_all_2$byClass,
+                      cm_cor_2$byClass,
+                      cm_rfe_2$byClass,
+                      cm_ga_2$byClass,
+                      cm_bor_2$byClass,
+                      cm_all_3$byClass,
+                      cm_cor_3$byClass,
+                      cm_rfe_3$byClass,
+                      cm_ga_3$byClass,
+                      cm_bor_3$byClass))
+
+byClass_gather <- byClass[, c(1:4, 7)] %>%
+  gather(measure, value, Sensitivity:Precision)
+```
+
+```{r}
+overall_byClass_gather <- rbind(overall_gather, byClass_gather)
+overall_byClass_gather <- within(overall_byClass_gather, model <- factor(model, levels = c("all", "cor", "rfe", "ga", "bor")))
+overall_byClass_gather$measure <- factor(overall_byClass_gather$measure,
+                                         levels = c("Accuracy", "Kappa", "Sensitivity", "Specificity", "Precision"))
+
+ggplot(overall_byClass_gather, aes(x = model, y = value, color = measure, shape = measure, group = measure)) +
+    geom_point(size = 4, alpha = 0.8) +
+    geom_path(alpha = 0.7) +
+    scale_colour_brewer(palette = "Set1") +
+    facet_grid(dataset ~ ., scales = "free_y") +
+    labs(
+        x = "Feature Selection method",
+        y = "Value",
+        color = "",
+        shape = "",
+        title = "Comparison of feature selection methods",
+        subtitle = "in three breast cancer datasets",
+        caption = "\nBreast Cancer Wisconsin (Diagnostic) Data Sets: 1, 2 & 3
+    Street et al., 1993;
+    all: no feature selection
+    cor: features with correlation > 0.7 removed
+    rfe: Recursive Feature Elimination
+    ga: Genetic Algorithm
+    bor: Boruta Algorithm"
+    )
+```
+
+```{r}
+ggplot(overall_byClass_gather, aes(x = measure, y = value, color = model, shape = model, group = model)) +
+    geom_point(size = 4, alpha = 0.8) +
+    geom_path(alpha = 0.7) +
+    scale_colour_brewer(palette = "Set1") +
+    facet_grid(dataset ~ ., scales = "free_y") +
+    labs(
+        x = "Feature Selection method",
+        y = "Value",
+        color = "",
+        shape = "",
+        title = "Comparison of feature selection methods",
+        subtitle = "in three breast cancer datasets",
+        caption = "\nBreast Cancer Wisconsin (Diagnostic) Data Sets: 1, 2 & 3
+    Street et al., 1993;
+    all: no feature selection
+    cor: features with correlation > 0.7 removed
+    rfe: Recursive Feature Elimination
+    ga: Genetic Algorithm
+    bor: Boruta Algorithm"
+    )
+```
+
+### Conclusions
+
+샘플 클래스에 대한 PCA 결과 (유방암의 재발/비재발 여부는 적절한 군집화가 되지 않는다.)에서도 예상했듯이, 데이터셋 3에 대한 랜덤 포레스트 모델은 데이터셋 1과 데이터셋 2에 대한 모델 정확도보다 낮은 정확도를 보여주었다.
+
+상관계수를 이용한 기법은 변수 중요성과는 상관없이 작동하였다. 다시 말해, 데이터셋 1에 대해서는 높은 중요성의 변수들은 높은 상관계수를 가지고 있었다. 상관계수 기법은 세 데이터셋 모두 가장 낮은 성능을 보여주었다. RFE와 GA는 높은 변수 중요성을 갖는 변수들을 포함하려는 경향은 있으나, 변수 중요성 홀로  결과물을 예측할 때 몇몇 변수들이 조합하여 잘 작동하는지를 나타내는 좋은 지표가 되지는 못한다.
+
+데이터셋 1은 아홉 개의 변수를 가지고 있었으며, 상관계수 기법은 가장 실망스러운 성능을 보여주었다. RFE와 GA 모두 변수 선택을 하지 않은 것보다 더 나은 성능을 보여주었으며, 그 중에서도 GA가 가장 좋은 성능을 보여주었다. 데이터셋 2는 30개의 변수를 갖고 있으며, GA가 가장 좋은 성능을 보여주었다. 마지막으로 데이터셋 3은 전체적으로 낮은 정확도를 모여주었으며, 각각의 변수 선택 기법들이 그리 좋은 성능을 보여주진 못했다.
