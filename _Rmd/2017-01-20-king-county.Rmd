@@ -1,0 +1,408 @@
+---
+title: "House Sales in King County, USA"
+author: "Jaeyoon Han"
+date: "`r Sys.Date()`"
+output: html_document
+layout: post
+image: /assets/article_images/2017-01-20-king-county/title.jpg
+categories: machine-learning
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(rmdformats)
+library(ggplot2)
+library(dplyr)
+library(ggthemr)
+library(printr)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	fig.align = "center",
+	fig.height = 8,
+	fig.width = 14,
+	fig.retina = 2,
+	warning = FALSE,
+	comment = NA,
+	prompt = FALSE,
+	tidy = FALSE
+)
+
+custom_theme <- theme_bw(base_size = 11, base_family = "sans") +
+    theme(
+        axis.title.x = element_text(face = "bold"),
+        axis.title.y = element_text(face = "bold"),
+        plot.title = element_text(face = "bold", size = 14),
+        panel.background = element_blank(),
+        axis.text.x = element_text(angle = 0,
+                                   vjust = .1),
+        axis.text.y = element_text(face = "italic"),
+        legend.position = "right",
+        strip.text = element_text(face = "bold",
+                                  size = 12),
+        legend.justification = "top", 
+        legend.title = element_text(size = 9, face = 'bold')
+    )
+theme_set(custom_theme)
+```
+
+## House Sales Prediction in King County, USA
+
+#### Introduction
+
+- Kaggle의 오픈 데이터에서 강의용 데이터로 쓸만한 회귀분석용 데이터를 찾던 중 이 데이터를 찾게 되었다. [링크](https://www.kaggle.com/harlfoxem/housesalesprediction)
+
+- 이 데이터셋은 2014년 5월부터 2015년 5월까지 매매된 King County의 집값 데이터를 포함하고 있다.
+
+- 이 데이터를 활용해서 강의에서 전달하고자 하는 바는 **Feature Engineering**과 **Data Exploration**의 힘이다. 정말 간단한 몇 개의 과정을 반복하는 것만으로도 예측 모델의 성능을 어디까지 끌어올릴 수 있는지를 보여주고자 했다.
+
+- 강의를 위해서 준비한 자료를 공유하는 것이기 때문에, 자세한 코멘트는 달지 않았다. 추후 시간을 더 들여서 자세한 설명을 담은 포스트를 작성하고자 한다.
+
+### Tying Shoes
+
+```{r}
+### Load the libraries
+library(lubridate)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(GGally)
+library(corrplot)
+library(ggmap)
+```
+
+```{r}
+### Load the dataset
+House <- read_csv("data/king_county/kc_house_data.csv")
+```
+
+```{r}
+head(House)
+```
+
+#### Visualizing (Heat Map)
+
+```{r}
+### Initialize a map for King County
+kingCounty <- get_map(location = 'issaquah',
+                      zoom = 9,
+                      maptype = "roadmap"
+)
+
+### Generate a heat map
+ggmap(kingCounty) + 
+    geom_density2d(data = House, aes(x = long, y = lat), size = .3) + 
+    stat_density2d(data = House, aes(x = long, y = lat, fill = ..level.., alpha = ..level..), size = 0.01, bins = 16, geom = "polygon") + 
+    scale_fill_gradient(low = "green", high = "red") + 
+    scale_alpha(range = c(0.2, 0.4), guide = FALSE)
+```
+
+- 대부분의 데이터가 시애틀 지역을 기반에 두고 있으며, 외곽의 버클리나 스노퀄미 등의 지역의 데이터도 포함되어 있다.
+
+#### Data Preparation
+
+```{r}
+House %>%
+    mutate(
+        sale_year = year(date),
+        sale_month = month(date)
+    ) %>%
+    select(-id, -date) -> House
+```
+
+```{r}
+set.seed(2017)
+trainIdx <- sample(1:nrow(House), size = 0.7 * nrow(House))
+train <- House[trainIdx, ]
+test <- House[-trainIdx, ]
+```
+
+#### Benchmark
+
+```{r}
+bench_model <- lm(price ~ ., data = train)
+summary(bench_model)
+benchmark <- predict(bench_model, test)
+benchmark <- ifelse(benchmark < 0, 0, benchmark)
+```
+
+- 벤치마크 모델의 경우 굉장히 나쁜 성능을 보일 것은 자명하다. 밑의 과정들을 통해서 성능을 개선해보자.
+
+
+### Data Exploration
+
+```{r}
+### Generate a heat map
+ggmap(kingCounty) + 
+    geom_point(data = train, aes(x = long, y = lat, color = log(price), alpha = log(price))) + 
+    scale_color_gradient(low = "green", high = "red")
+```
+
+- `price`를 로그화하여 시각화한 결과로, 남부(`lat < 47.5`)보다 북부(`lat >= 47.5`) 쪽의 가격이 더 높음을 알 수 있다.
+- 그 중에서도 해변가에 인접한 곳의 가격이 더 높다.
+
+#### Correlation
+
+```{r}
+cor_House <- cor(House[, -1])
+corrplot(cor_House, order = "hclust")
+```
+
+#### Boxplots
+
+###### Grade - Price
+
+```{r}
+train %>%
+    mutate(grade = factor(grade)) %>%
+    ggplot(aes(x = grade, y = price, fill = grade)) +
+    geom_boxplot() + 
+    geom_point(
+        data = train %>% 
+            group_by(grade) %>%
+            summarise(median = median(price)) %>%
+            mutate(grade = factor(grade)),
+        aes(x = grade, y = median, group = 1),
+        size = 5, stroke = 2,
+        color = "black", fill = "white", shape = 23
+    )
+```
+
+- `grade`가 한 단계 높아질 때마다 가격이 기하급수적으로 증가하는 것으로 보인다. 확인을 위해서 `log(price)`에 대해서 박스플롯을 그려본다.
+
+```{r}
+train %>%
+    mutate(grade = factor(grade)) %>%
+    ggplot(aes(x = grade, y = log(price), fill = grade)) +
+    geom_boxplot() + 
+    geom_point(
+        data = train %>% 
+            group_by(grade) %>%
+            summarise(median = median(log(price))) %>%
+            mutate(grade = factor(grade)),
+        aes(x = grade, y = median, group = 1),
+        size = 5, stroke = 2,
+        color = "black", fill = "white", shape = 23
+    )
+```
+
+###### Year Build - Price
+
+```{r}
+train %>%
+    mutate(yr_cat = cut(yr_built, breaks = seq(1900, 2020, by = 10),
+                        labels = paste0(seq(1900, 2010, by = 10), "s"))) %>%
+    ggplot(aes(x = yr_cat, y = log(price), fill = yr_cat)) + 
+    geom_boxplot()
+```
+
+- 건물이 지어진 연대와 가격 사이에는 큰 인사이트를 얻기 힘들어 보인다. 
+
+###### Year Renovated - Price
+
+```{r}
+train %>%
+    filter(yr_renovated != 0) %>%
+    mutate(renovated_cat = cut(yr_renovated, breaks = seq(1930, 2020, by = 10),
+                        labels = paste0(seq(1930, 2010, by = 10), "s"))) %>%
+    ggplot(aes(x = renovated_cat, y = log(price), fill = renovated_cat)) + 
+    geom_boxplot()
+```
+
+- 집을 개조한 경우, 최근에 개조할 수록 가격이 조금이라도 증가하는 경향을 보인다.
+
+###### Is there any difference between renovated / non-renovated
+
+```{r}
+train %>%
+    mutate(isRenovated = factor(ifelse(yr_renovated != 0, 1, 0))) %>%
+    ggplot(aes(x = isRenovated, y = log(price), fill = isRenovated)) + 
+    geom_boxplot()
+```
+
+- 개조한 집의 가격이 대체로 비싸게 책정됨을 알 수 있다.
+
+###### Year Saled - Price / Month Saled - Price
+
+```{r}
+train %>%
+    mutate(sale_year = factor(sale_year)) %>%
+    ggplot(aes(x = sale_year, y = log(price), fill = sale_year)) + 
+    geom_boxplot()
+```
+
+```{r}
+train %>%
+    mutate(sale_month = factor(sale_month)) %>%
+    ggplot(aes(x = sale_month, y = log(price), fill = sale_month)) + 
+    geom_boxplot()
+```
+
+- 두 변수 모두 가격에 영향을 미치는 것으로 보이진 않는다.
+
+###### Bathrooms - Price
+
+```{r}
+train %>%
+    mutate(bathrooms = factor(bathrooms)) %>%
+    ggplot(aes(x = bathrooms, y = log(price), fill = bathrooms)) + 
+    geom_boxplot()
+```
+
+- `log(price)`와 `bathrooms`는 유사 선형관계를 가진다.
+
+###### Coordinate - Price
+
+```{r}
+train %>%
+    ggplot(aes(x = lat, y = log(price), color = lat)) + 
+    geom_line() + geom_point(shape = 21)
+```
+
+```{r}
+train %>%
+    ggplot(aes(x = long, y = log(price), color = long)) + 
+    geom_line() + geom_point(shape = 21)
+```
+
+- 위도와 경도 모두 특정 영역에서 높은 가격대가 형성이 되어 있다. 변수를 새로 생성해서 영역을 분리하는 것이 도움이 될 것으로 보인다.
+    - Latitude : ~47.5 / 47.5 ~ 47.6 / 47.6 ~ 
+
+###### Zip Code - Price
+
+```{r}
+sort(unique(train$zipcode)) == sort(unique(test$zipcode))
+```
+
+- 트레이닝 데이터와 테스트 데이터에 존재하는 Zip Code는 동일하다.
+
+```{r}
+train %>%
+    arrange(zipcode) %>%
+    mutate(zipcode = factor(zipcode)) %>%
+    ggplot(aes(x = zipcode, y = log(price), fill = zipcode)) + 
+    geom_boxplot()
+```
+
+- **one-hot encoding** 으로 데이터를 확장하는 것을 고려하자.
+
+### Feature Engineering
+
+###### Split the latitude
+
+```{r}
+splitLat <- function(data){
+    data <- data %>%
+        dplyr::mutate(lat1 = ifelse(lat <= 47.5, lat, 0),
+                      lat2 = ifelse(lat > 47.5 & lat <= 47.6, lat, 0),
+                      lat3 = ifelse(lat > 47.6, lat, 0)) %>%
+        dplyr::select(-lat)
+    return(data)
+}
+
+train <- splitLat(train)
+test <- splitLat(test)
+```
+
+###### Is this house renovated?
+
+```{r}
+train <- train %>%
+    mutate(isRenovated = ifelse(yr_renovated != 0, 1, 0))
+
+test <- test %>%
+    mutate(isRenovated = ifelse(yr_renovated != 0, 1, 0))
+```
+
+###### How old is this house?
+
+```{r}
+train <- train %>%
+    mutate(age = ifelse(yr_renovated != 0, 2016 - yr_renovated, 2016 - yr_built))
+
+test <- test %>%
+    mutate(age = ifelse(yr_renovated != 0, 2016 - yr_renovated, 2016 - yr_built))
+```
+
+###### Zip Code (one-hot encoding)
+
+```{r}
+train$zipcode <- factor(train$zipcode)
+test$zipcode <- factor(test$zipcode)
+zipcode_train <- data.frame(model.matrix(price ~ 0 + zipcode, data = train))
+zipcode_test <- data.frame(model.matrix(price ~ 0 + zipcode, data = test))
+```
+
+```{r}
+train <- train %>%
+    select(-zipcode) %>%
+    cbind(zipcode_train)
+
+test <- test %>%
+    select(-zipcode) %>%
+    cbind(zipcode_test)
+```
+
+###### Feature Selection
+
+```{r}
+train <- train %>%
+    select(-sale_month, -yr_built, -yr_renovated, -sale_year)
+
+test <- test %>%
+    select(-sale_month, -yr_built, -yr_renovated, -sale_year)
+```
+
+### Modeling
+
+```{r}
+model <- lm(log(price) ~ ., data = train)
+summary(model)
+```
+
+- Singularity 가 발생한다. 우선 `Intercept`를 제거해보자.
+
+```{r}
+model <- lm(log(price) ~ . -1, data = train)
+summary(model)
+```
+
+- 여전히 `sqft_basement` 변수가 문제를 일으킨다. 해당 변수를 제거하고 모델링하도록 한다.
+
+```{r}
+model <- lm(log(price) ~ . -1 - sqft_basement, data = train)
+summary(model)
+```
+
+- 참고로 Singularity가 발생하는 변수를 제거하는 것은 사실 굳이 할 필요는 없다. 다만 Intercept를 제거함으로써 모델의 설명력을 높일 수 있다. 어떻게 보면 Intercept는 모두 0인 경우를 의미하는데, 이 데이터에서는 그런 경우가 전무하다.
+
+###### Evaluation Metric: RMSLE
+
+평가 메트릭으로 **Root Mean Squared Logarithmic Error(RMSLE)**를 사용한다. 해당 메트릭은 과대평가된 항목보다는 과소평가된 항목에 페널티를 준다.
+
+$$
+RMSLE = \sqrt{\frac{1}{n} \sum^n_{i=1} \left( \log(p_i + 1) - \log(a_i + 1)\right)^2}
+$$
+```{r}
+rmsle <- function(predict, actual){
+    if(length(predict) != length(actual))
+        stop("The length of two vectors are different.")
+    
+    len <- length(predict)
+    rmsle <- sqrt((1/len) * sum((log(predict + 1) - log(actual + 1))^2))
+    return(rmsle)
+}
+```
+
+###### Test
+
+```{r}
+pred <- predict(model, test)
+pred <- exp(pred)
+
+result <- rmsle(pred, test$price)
+benchmark_result <- rmsle(benchmark, test$price)
+cat("RMSLE (Benchmark): ", benchmark_result, "\nRMSLE (Final): ", result)
+```
+
+- 데이터에 아무런 조작을 하지 않고, 로그 스케일을 고려하지 않은 벤치마크 모델의 RMSLE 값은 `r benchmark_result`이다. 로그 스케일과 피쳐 엔지니어링을 이용한 모델의 예측력은 다섯 배 가량 개선되었다. 최종 모델의 RMSLE는 `r result`이다.
