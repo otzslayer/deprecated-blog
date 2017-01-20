@@ -360,22 +360,6 @@ model <- lm(log(price) ~ ., data = train)
 summary(model)
 ```
 
-- Singularity 가 발생한다. 우선 `Intercept`를 제거해보자.
-
-```{r}
-model <- lm(log(price) ~ . -1, data = train)
-summary(model)
-```
-
-- 여전히 `sqft_basement` 변수가 문제를 일으킨다. 해당 변수를 제거하고 모델링하도록 한다.
-
-```{r}
-model <- lm(log(price) ~ . -1 - sqft_basement, data = train)
-summary(model)
-```
-
-- 참고로 Singularity가 발생하는 변수를 제거하는 것은 사실 굳이 할 필요는 없다. 다만 Intercept를 제거함으로써 모델의 설명력을 높일 수 있다. 어떻게 보면 Intercept는 모두 0인 경우를 의미하는데, 이 데이터에서는 그런 경우가 전무하다.
-
 ###### Evaluation Metric: RMSLE
 
 평가 메트릭으로 **Root Mean Squared Logarithmic Error(RMSLE)**를 사용한다. 해당 메트릭은 과대평가된 항목보다는 과소평가된 항목에 페널티를 준다.
