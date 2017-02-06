@@ -1,7 +1,7 @@
 ---
 title: "House Sales in King County, USA"
 author: "Jaeyoon Han"
-date: "2017-01-20"
+date: "2017-02-06"
 output: html_document
 layout: post
 image: /assets/article_images/2017-01-20-king-county/title.jpg
@@ -76,7 +76,7 @@ ggmap(kingCounty) +
     scale_alpha(range = c(0.2, 0.4), guide = FALSE)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-422-1.png" title="plot of chunk unnamed-chunk-422" alt="plot of chunk unnamed-chunk-422" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="1008" style="display: block; margin: auto;" />
 
 - 대부분의 데이터가 시애틀 지역을 기반에 두고 있으며, 외곽의 버클리나 스노퀄미 등의 지역의 데이터도 포함되어 있다.
 
@@ -170,7 +170,7 @@ ggmap(kingCounty) +
     scale_color_gradient(low = "green", high = "red")
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-426-1.png" title="plot of chunk unnamed-chunk-426" alt="plot of chunk unnamed-chunk-426" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" width="1008" style="display: block; margin: auto;" />
 
 - `price`를 로그화하여 시각화한 결과로, 남부(`lat < 47.5`)보다 북부(`lat >= 47.5`) 쪽의 가격이 더 높음을 알 수 있다.
 - 그 중에서도 해변가에 인접한 곳의 가격이 더 높다.
@@ -183,7 +183,7 @@ cor_House <- cor(House[, -1])
 corrplot(cor_House, order = "hclust")
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-427-1.png" title="plot of chunk unnamed-chunk-427" alt="plot of chunk unnamed-chunk-427" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="1008" style="display: block; margin: auto;" />
 
 #### Boxplots
 
@@ -206,7 +206,7 @@ train %>%
     )
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-428-1.png" title="plot of chunk unnamed-chunk-428" alt="plot of chunk unnamed-chunk-428" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-10-1.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" width="1008" style="display: block; margin: auto;" />
 
 - `grade`가 한 단계 높아질 때마다 가격이 기하급수적으로 증가하는 것으로 보인다. 확인을 위해서 `log(price)`에 대해서 박스플롯을 그려본다.
 
@@ -227,7 +227,7 @@ train %>%
     )
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-429-1.png" title="plot of chunk unnamed-chunk-429" alt="plot of chunk unnamed-chunk-429" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" width="1008" style="display: block; margin: auto;" />
 
 ###### Year Build - Price
 
@@ -240,7 +240,7 @@ train %>%
     geom_boxplot()
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-430-1.png" title="plot of chunk unnamed-chunk-430" alt="plot of chunk unnamed-chunk-430" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" width="1008" style="display: block; margin: auto;" />
 
 - 건물이 지어진 연대와 가격 사이에는 큰 인사이트를 얻기 힘들어 보인다. 
 
@@ -256,7 +256,7 @@ train %>%
     geom_boxplot()
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-431-1.png" title="plot of chunk unnamed-chunk-431" alt="plot of chunk unnamed-chunk-431" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" width="1008" style="display: block; margin: auto;" />
 
 - 집을 개조한 경우, 최근에 개조할 수록 가격이 조금이라도 증가하는 경향을 보인다.
 
@@ -270,7 +270,7 @@ train %>%
     geom_boxplot()
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-432-1.png" title="plot of chunk unnamed-chunk-432" alt="plot of chunk unnamed-chunk-432" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" width="1008" style="display: block; margin: auto;" />
 
 - 개조한 집의 가격이 대체로 비싸게 책정됨을 알 수 있다.
 
@@ -284,7 +284,7 @@ train %>%
     geom_boxplot()
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-433-1.png" title="plot of chunk unnamed-chunk-433" alt="plot of chunk unnamed-chunk-433" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -294,7 +294,7 @@ train %>%
     geom_boxplot()
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-434-1.png" title="plot of chunk unnamed-chunk-434" alt="plot of chunk unnamed-chunk-434" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="1008" style="display: block; margin: auto;" />
 
 - 두 변수 모두 가격에 영향을 미치는 것으로 보이진 않는다.
 
@@ -308,7 +308,7 @@ train %>%
     geom_boxplot()
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-435-1.png" title="plot of chunk unnamed-chunk-435" alt="plot of chunk unnamed-chunk-435" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" width="1008" style="display: block; margin: auto;" />
 
 - `log(price)`와 `bathrooms`는 유사 선형관계를 가진다.
 
@@ -321,7 +321,7 @@ train %>%
     geom_line() + geom_point(shape = 21)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-436-1.png" title="plot of chunk unnamed-chunk-436" alt="plot of chunk unnamed-chunk-436" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="1008" style="display: block; margin: auto;" />
 
 
 {% highlight r linenos %}
@@ -330,7 +330,7 @@ train %>%
     geom_line() + geom_point(shape = 21)
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-437-1.png" title="plot of chunk unnamed-chunk-437" alt="plot of chunk unnamed-chunk-437" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="1008" style="display: block; margin: auto;" />
 
 - 위도와 경도 모두 특정 영역에서 높은 가격대가 형성이 되어 있다. 변수를 새로 생성해서 영역을 분리하는 것이 도움이 될 것으로 보인다.
     - Latitude : ~47.5 / 47.5 ~ 47.6 / 47.6 ~ 
@@ -363,7 +363,7 @@ train %>%
     geom_boxplot()
 {% endhighlight %}
 
-<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-439-1.png" title="plot of chunk unnamed-chunk-439" alt="plot of chunk unnamed-chunk-439" width="1008" style="display: block; margin: auto;" />
+<img src="/assets/article_images/2017-01-20-king-county/unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" width="1008" style="display: block; margin: auto;" />
 
 - **one-hot encoding** 으로 데이터를 확장하는 것을 고려하자.
 
@@ -414,30 +414,6 @@ test <- test %>%
 {% highlight r linenos %}
 train$zipcode <- factor(train$zipcode)
 test$zipcode <- factor(test$zipcode)
-zipcode_train <- data.frame(model.matrix(price ~ 0 + zipcode, data = train))
-zipcode_test <- data.frame(model.matrix(price ~ 0 + zipcode, data = test))
-{% endhighlight %}
-
-
-{% highlight r linenos %}
-train <- train %>%
-    select(-zipcode) %>%
-    cbind(zipcode_train)
-
-test <- test %>%
-    select(-zipcode) %>%
-    cbind(zipcode_test)
-{% endhighlight %}
-
-###### Feature Selection
-
-
-{% highlight r linenos %}
-train <- train %>%
-    select(-sale_month, -yr_built, -yr_renovated, -sale_year)
-
-test <- test %>%
-    select(-sale_month, -yr_built, -yr_renovated, -sale_year)
 {% endhighlight %}
 
 ### Modeling
@@ -457,106 +433,109 @@ lm(formula = log(price) ~ ., data = train)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--1.31378 -0.09517  0.00703  0.10587  1.03878 
+-1.34466 -0.09549  0.00900  0.10445  0.99991 
 
-Coefficients: (2 not defined because of singularities)
+Coefficients: (1 not defined because of singularities)
                 Estimate Std. Error t value Pr(>|t|)    
-(Intercept)   -3.601e+01  8.768e+00  -4.107 4.03e-05 ***
-bedrooms       4.239e-03  2.081e-03   2.037 0.041693 *  
-bathrooms      3.462e-02  3.645e-03   9.496  < 2e-16 ***
-sqft_living    1.298e-04  4.893e-06  26.537  < 2e-16 ***
-sqft_lot       5.868e-07  5.108e-08  11.488  < 2e-16 ***
-floors        -2.920e-02  4.340e-03  -6.728 1.78e-11 ***
-waterfront     4.725e-01  1.939e-02  24.373  < 2e-16 ***
-view           5.974e-02  2.376e-03  25.144  < 2e-16 ***
-condition      6.171e-02  2.686e-03  22.978  < 2e-16 ***
-grade          8.768e-02  2.515e-03  34.859  < 2e-16 ***
-sqft_above     6.999e-05  5.013e-06  13.961  < 2e-16 ***
+(Intercept)   -1.724e+02  1.346e+01 -12.801  < 2e-16 ***
+bedrooms       3.475e-03  2.059e-03   1.687 0.091539 .  
+bathrooms      3.492e-02  3.607e-03   9.682  < 2e-16 ***
+sqft_living    1.293e-04  4.842e-06  26.706  < 2e-16 ***
+sqft_lot       5.831e-07  5.052e-08  11.542  < 2e-16 ***
+floors        -2.629e-02  4.304e-03  -6.107 1.04e-09 ***
+waterfront     4.803e-01  1.920e-02  25.022  < 2e-16 ***
+view           5.911e-02  2.351e-03  25.144  < 2e-16 ***
+condition      6.463e-02  2.662e-03  24.278  < 2e-16 ***
+grade          8.787e-02  2.489e-03  35.305  < 2e-16 ***
+sqft_above     7.052e-05  4.960e-06  14.218  < 2e-16 ***
 sqft_basement         NA         NA      NA       NA    
-long          -2.753e-01  6.418e-02  -4.289 1.80e-05 ***
-sqft_living15  8.800e-05  3.976e-06  22.134  < 2e-16 ***
-sqft_lot15     2.062e-07  8.077e-08   2.553 0.010704 *  
-lat1           2.958e-01  9.253e-02   3.197 0.001391 ** 
-lat2           2.982e-01  9.247e-02   3.225 0.001262 ** 
-lat3           2.985e-01  9.241e-02   3.231 0.001238 ** 
-isRenovated    1.015e-01  8.029e-03  12.639  < 2e-16 ***
-age            1.292e-04  9.020e-05   1.432 0.152121    
-zipcode98001  -6.000e-01  3.607e-02 -16.634  < 2e-16 ***
-zipcode98002  -6.126e-01  3.846e-02 -15.930  < 2e-16 ***
-zipcode98003  -5.942e-01  3.584e-02 -16.581  < 2e-16 ***
-zipcode98004   2.902e-01  2.229e-02  13.020  < 2e-16 ***
-zipcode98005  -4.894e-02  2.667e-02  -1.835 0.066498 .  
-zipcode98006  -1.380e-01  2.789e-02  -4.947 7.62e-07 ***
-zipcode98007  -1.268e-01  2.828e-02  -4.482 7.46e-06 ***
-zipcode98008  -1.279e-01  2.639e-02  -4.847 1.27e-06 ***
-zipcode98010  -2.817e-01  4.484e-02  -6.283 3.40e-10 ***
-zipcode98011  -3.903e-01  2.660e-02 -14.673  < 2e-16 ***
-zipcode98014  -3.849e-01  4.268e-02  -9.017  < 2e-16 ***
-zipcode98019  -4.412e-01  3.629e-02 -12.157  < 2e-16 ***
-zipcode98022  -4.476e-01  4.886e-02  -9.162  < 2e-16 ***
-zipcode98023  -6.604e-01  3.543e-02 -18.638  < 2e-16 ***
-zipcode98024  -2.707e-01  4.497e-02  -6.019 1.80e-09 ***
-zipcode98027  -1.907e-01  3.268e-02  -5.836 5.45e-09 ***
-zipcode98028  -4.286e-01  2.351e-02 -18.230  < 2e-16 ***
-zipcode98029  -1.172e-01  3.455e-02  -3.394 0.000691 ***
-zipcode98030  -5.375e-01  3.506e-02 -15.332  < 2e-16 ***
-zipcode98031  -5.322e-01  3.289e-02 -16.180  < 2e-16 ***
-zipcode98032  -6.489e-01  3.645e-02 -17.805  < 2e-16 ***
-zipcode98033  -3.920e-02  2.198e-02  -1.784 0.074466 .  
-zipcode98034  -2.973e-01  2.154e-02 -13.803  < 2e-16 ***
-zipcode98038  -3.803e-01  3.779e-02 -10.065  < 2e-16 ***
-zipcode98039   4.061e-01  3.498e-02  11.612  < 2e-16 ***
-zipcode98040   7.559e-02  2.678e-02   2.823 0.004770 ** 
-zipcode98042  -5.138e-01  3.532e-02 -14.550  < 2e-16 ***
-zipcode98045  -1.860e-01  4.867e-02  -3.822 0.000133 ***
-zipcode98052  -1.631e-01  2.438e-02  -6.689 2.33e-11 ***
-zipcode98053  -1.842e-01  2.988e-02  -6.166 7.20e-10 ***
-zipcode98055  -4.753e-01  3.046e-02 -15.607  < 2e-16 ***
-zipcode98056  -4.058e-01  2.782e-02 -14.587  < 2e-16 ***
-zipcode98058  -4.522e-01  3.126e-02 -14.464  < 2e-16 ***
-zipcode98059  -3.239e-01  2.961e-02 -10.936  < 2e-16 ***
-zipcode98065  -2.789e-01  4.200e-02  -6.641 3.22e-11 ***
-zipcode98070  -3.861e-01  3.497e-02 -11.040  < 2e-16 ***
-zipcode98072  -3.363e-01  2.770e-02 -12.139  < 2e-16 ***
-zipcode98074  -2.122e-01  2.839e-02  -7.474 8.22e-14 ***
-zipcode98075  -1.885e-01  3.323e-02  -5.671 1.45e-08 ***
-zipcode98077  -3.683e-01  3.179e-02 -11.587  < 2e-16 ***
-zipcode98092  -5.333e-01  3.842e-02 -13.883  < 2e-16 ***
-zipcode98102   1.006e-01  2.585e-02   3.893 9.96e-05 ***
-zipcode98103  -5.077e-02  1.660e-02  -3.058 0.002234 ** 
-zipcode98105   9.266e-02  2.092e-02   4.428 9.56e-06 ***
-zipcode98106  -4.839e-01  2.438e-02 -19.850  < 2e-16 ***
-zipcode98107  -3.155e-02  1.918e-02  -1.645 0.099985 .  
-zipcode98108  -4.570e-01  2.662e-02 -17.165  < 2e-16 ***
-zipcode98109   1.570e-01  2.457e-02   6.389 1.72e-10 ***
-zipcode98112   2.188e-01  2.018e-02  10.842  < 2e-16 ***
-zipcode98115  -3.856e-02  1.737e-02  -2.220 0.026423 *  
-zipcode98116  -6.890e-02  2.351e-02  -2.930 0.003390 ** 
-zipcode98117  -6.495e-02  1.655e-02  -3.925 8.69e-05 ***
-zipcode98118  -3.400e-01  2.436e-02 -13.953  < 2e-16 ***
-zipcode98119   1.261e-01  2.104e-02   5.992 2.12e-09 ***
-zipcode98122  -3.012e-02  1.954e-02  -1.542 0.123165    
-zipcode98125  -2.859e-01  1.938e-02 -14.751  < 2e-16 ***
-zipcode98126  -2.750e-01  2.410e-02 -11.411  < 2e-16 ***
-zipcode98133  -4.204e-01  1.872e-02 -22.454  < 2e-16 ***
-zipcode98136  -1.395e-01  2.541e-02  -5.490 4.08e-08 ***
-zipcode98144  -1.511e-01  2.383e-02  -6.341 2.34e-10 ***
-zipcode98146  -4.886e-01  2.573e-02 -18.993  < 2e-16 ***
-zipcode98148  -4.721e-01  4.026e-02 -11.726  < 2e-16 ***
-zipcode98155  -4.440e-01  2.056e-02 -21.597  < 2e-16 ***
-zipcode98166  -3.706e-01  2.901e-02 -12.774  < 2e-16 ***
-zipcode98168  -6.190e-01  2.734e-02 -22.639  < 2e-16 ***
-zipcode98177  -2.873e-01  2.077e-02 -13.834  < 2e-16 ***
-zipcode98178  -5.618e-01  2.777e-02 -20.234  < 2e-16 ***
-zipcode98188  -5.332e-01  3.250e-02 -16.406  < 2e-16 ***
-zipcode98198  -5.906e-01  3.155e-02 -18.720  < 2e-16 ***
-zipcode98199          NA         NA      NA       NA    
+yr_built       1.412e-05  3.319e-04   0.043 0.966069    
+yr_renovated   3.900e-03  5.273e-04   7.396 1.48e-13 ***
+zipcode98002  -1.643e-02  1.959e-02  -0.839 0.401492    
+zipcode98003   2.312e-03  1.732e-02   0.133 0.893808    
+zipcode98004   8.901e-01  3.264e-02  27.266  < 2e-16 ***
+zipcode98005   5.514e-01  3.427e-02  16.091  < 2e-16 ***
+zipcode98006   4.636e-01  2.867e-02  16.173  < 2e-16 ***
+zipcode98007   4.747e-01  3.537e-02  13.422  < 2e-16 ***
+zipcode98008   4.733e-01  3.451e-02  13.714  < 2e-16 ***
+zipcode98010   3.160e-01  2.935e-02  10.768  < 2e-16 ***
+zipcode98011   2.156e-01  4.426e-02   4.871 1.12e-06 ***
+zipcode98014   2.213e-01  4.945e-02   4.476 7.67e-06 ***
+zipcode98019   1.608e-01  4.803e-02   3.347 0.000818 ***
+zipcode98022   1.466e-01  2.632e-02   5.570 2.59e-08 ***
+zipcode98023  -6.187e-02  1.647e-02  -3.755 0.000174 ***
+zipcode98024   3.271e-01  4.332e-02   7.552 4.52e-14 ***
+zipcode98027   4.123e-01  2.915e-02  14.143  < 2e-16 ***
+zipcode98028   1.791e-01  4.291e-02   4.175 3.00e-05 ***
+zipcode98029   4.862e-01  3.361e-02  14.466  < 2e-16 ***
+zipcode98030   5.803e-02  1.987e-02   2.920 0.003506 ** 
+zipcode98031   6.711e-02  2.010e-02   3.338 0.000845 ***
+zipcode98032  -5.169e-02  2.409e-02  -2.146 0.031880 *  
+zipcode98033   5.632e-01  3.741e-02  15.053  < 2e-16 ***
+zipcode98034   3.090e-01  3.971e-02   7.780 7.72e-15 ***
+zipcode98038   2.167e-01  2.205e-02   9.829  < 2e-16 ***
+zipcode98039   1.016e+00  4.378e-02  23.207  < 2e-16 ***
+zipcode98040   6.770e-01  2.881e-02  23.495  < 2e-16 ***
+zipcode98042   8.254e-02  1.863e-02   4.430 9.48e-06 ***
+zipcode98045   4.201e-01  4.097e-02  10.255  < 2e-16 ***
+zipcode98052   4.434e-01  3.821e-02  11.606  < 2e-16 ***
+zipcode98053   4.215e-01  4.088e-02  10.312  < 2e-16 ***
+zipcode98055   1.231e-01  2.272e-02   5.419 6.09e-08 ***
+zipcode98056   1.924e-01  2.462e-02   7.814 5.90e-15 ***
+zipcode98058   1.456e-01  2.153e-02   6.762 1.41e-11 ***
+zipcode98059   2.764e-01  2.401e-02  11.511  < 2e-16 ***
+zipcode98065   3.206e-01  3.819e-02   8.396  < 2e-16 ***
+zipcode98070   2.187e-01  2.839e-02   7.704 1.41e-14 ***
+zipcode98072   2.680e-01  4.418e-02   6.066 1.35e-09 ***
+zipcode98074   3.914e-01  3.681e-02  10.635  < 2e-16 ***
+zipcode98075   4.124e-01  3.445e-02  11.972  < 2e-16 ***
+zipcode98077   2.386e-01  4.607e-02   5.179 2.26e-07 ***
+zipcode98092   6.066e-02  1.763e-02   3.441 0.000581 ***
+zipcode98102   7.040e-01  3.863e-02  18.224  < 2e-16 ***
+zipcode98103   5.535e-01  3.617e-02  15.301  < 2e-16 ***
+zipcode98105   6.903e-01  3.723e-02  18.543  < 2e-16 ***
+zipcode98106   1.161e-01  2.628e-02   4.417 1.01e-05 ***
+zipcode98107   5.679e-01  3.732e-02  15.218  < 2e-16 ***
+zipcode98108   1.462e-01  2.892e-02   5.056 4.32e-07 ***
+zipcode98109   7.571e-01  3.829e-02  19.771  < 2e-16 ***
+zipcode98112   8.180e-01  3.461e-02  23.633  < 2e-16 ***
+zipcode98115   5.640e-01  3.664e-02  15.390  < 2e-16 ***
+zipcode98116   5.312e-01  2.933e-02  18.113  < 2e-16 ***
+zipcode98117   5.383e-01  3.711e-02  14.505  < 2e-16 ***
+zipcode98118   2.564e-01  2.593e-02   9.887  < 2e-16 ***
+zipcode98119   7.252e-01  3.653e-02  19.851  < 2e-16 ***
+zipcode98122   5.698e-01  3.299e-02  17.272  < 2e-16 ***
+zipcode98125   3.183e-01  3.934e-02   8.090 6.40e-16 ***
+zipcode98126   3.278e-01  2.717e-02  12.066  < 2e-16 ***
+zipcode98133   1.829e-01  4.042e-02   4.524 6.12e-06 ***
+zipcode98136   4.607e-01  2.806e-02  16.415  < 2e-16 ***
+zipcode98144   4.454e-01  2.947e-02  15.114  < 2e-16 ***
+zipcode98146   1.132e-01  2.426e-02   4.664 3.12e-06 ***
+zipcode98148   1.338e-01  3.442e-02   3.887 0.000102 ***
+zipcode98155   1.588e-01  4.197e-02   3.783 0.000155 ***
+zipcode98166   2.300e-01  2.291e-02  10.040  < 2e-16 ***
+zipcode98168  -1.569e-02  2.371e-02  -0.662 0.508155    
+zipcode98177   3.189e-01  4.201e-02   7.591 3.36e-14 ***
+zipcode98178   3.922e-02  2.445e-02   1.604 0.108728    
+zipcode98188   6.366e-02  2.540e-02   2.507 0.012197 *  
+zipcode98198   6.464e-03  1.910e-02   0.338 0.734994    
+zipcode98199   6.004e-01  3.569e-02  16.821  < 2e-16 ***
+long          -2.737e-01  6.348e-02  -4.312 1.63e-05 ***
+sqft_living15  8.920e-05  3.933e-06  22.679  < 2e-16 ***
+sqft_lot15     1.997e-07  7.990e-08   2.500 0.012442 *  
+sale_year      6.783e-02  5.156e-03  13.156  < 2e-16 ***
+sale_month     3.004e-03  7.699e-04   3.902 9.58e-05 ***
+lat1           2.801e-01  9.154e-02   3.060 0.002215 ** 
+lat2           2.825e-01  9.148e-02   3.088 0.002016 ** 
+lat3           2.829e-01  9.142e-02   3.094 0.001978 ** 
+isRenovated   -7.677e+00  1.046e+00  -7.339 2.26e-13 ***
+age            2.176e-04  3.375e-04   0.645 0.518993    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.1852 on 15041 degrees of freedom
-Multiple R-squared:  0.8771,	Adjusted R-squared:  0.8764 
-F-statistic:  1234 on 87 and 15041 DF,  p-value: < 2.2e-16
+Residual standard error: 0.1832 on 15037 degrees of freedom
+Multiple R-squared:  0.8798,	Adjusted R-squared:  0.8791 
+F-statistic:  1210 on 91 and 15037 DF,  p-value: < 2.2e-16
 {% endhighlight %}
 
 ###### Evaluation Metric: RMSLE
@@ -594,7 +573,7 @@ cat("RMSLE (Benchmark): ", benchmark_result, "\nRMSLE (Final): ", result)
 
 {% highlight text %}
 RMSLE (Benchmark):  0.9280684 
-RMSLE (Final):  0.1816971
+RMSLE (Final):  0.1794722
 {% endhighlight %}
 
-- 데이터에 아무런 조작을 하지 않고, 로그 스케일을 고려하지 않은 벤치마크 모델의 RMSLE 값은 0.9280684이다. 로그 스케일과 피쳐 엔지니어링을 이용한 모델의 예측력은 다섯 배 가량 개선되었다. 최종 모델의 RMSLE는 0.1816971이다.
+- 데이터에 아무런 조작을 하지 않고, 로그 스케일을 고려하지 않은 벤치마크 모델의 RMSLE 값은 0.9280684이다. 로그 스케일과 피쳐 엔지니어링을 이용한 모델의 예측력은 다섯 배 가량 개선되었다. 최종 모델의 RMSLE는 0.1794722이다.

@@ -329,18 +329,6 @@ test <- test %>%
 ```{r}
 train$zipcode <- factor(train$zipcode)
 test$zipcode <- factor(test$zipcode)
-zipcode_train <- data.frame(model.matrix(price ~ 0 + zipcode, data = train))
-zipcode_test <- data.frame(model.matrix(price ~ 0 + zipcode, data = test))
-```
-
-```{r}
-train <- train %>%
-    select(-zipcode) %>%
-    cbind(zipcode_train)
-
-test <- test %>%
-    select(-zipcode) %>%
-    cbind(zipcode_test)
 ```
 
 ### Modeling
