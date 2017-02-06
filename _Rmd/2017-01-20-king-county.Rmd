@@ -343,16 +343,6 @@ test <- test %>%
     cbind(zipcode_test)
 ```
 
-###### Feature Selection
-
-```{r}
-train <- train %>%
-    select(-sale_month, -yr_built, -yr_renovated, -sale_year)
-
-test <- test %>%
-    select(-sale_month, -yr_built, -yr_renovated, -sale_year)
-```
-
 ### Modeling
 
 ```{r}
