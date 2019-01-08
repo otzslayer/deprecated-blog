@@ -17,3 +17,83 @@
 
 [^1]: Rashmi, K. V., and Ran Gilad-Bachrach. "Dart: Dropouts meet multiple additive regression trees." *International Conference on Artificial Intelligence and Statistics*. 2015.
 
+
+
+# Mathematical Concepts for New Novel Features of LightGBM
+
+## Gradient-based One-side Sampling (GOSS)
+
+### About GOSS
+
+In typical GBDT, the gradient for each data instance in GBDT provides us with useful information for data sampling. That is, if an instance is associated with a small gradient, the training error for this instance is small and it is already well-trained. A straightforward idea is to discard those data instances with small gradients. To avoid the problem with the loss of accuracy by ignoring small gradients, the authors propose a new method called GOSS.
+
+<center>
+<figure>
+<img src="D:\Study Stuffs\imgs\goss.png" width=400px class="center">
+<figcaption>Fig.1 - Pseudocode for Gradient-based One-side Sampling</figcaption>
+</figure>
+</center>
+### Theoretical Anlaysis
+
+#### Definition 3.1
+
+> *Let $O$ be the training dataset on a fixed node of the decision tree. The variance gain of splitting feature $j$ at point $d$ for this node is defined as*
+> $$
+> V_{j \mid O}(d) = \frac{1}{n_O} \left( \frac{\left( \sum_{\{x_i \in O : x_{ij} \leq d} g_i \right)^2}{n_{l \mid O}^j (d)} + \frac{\left( \sum_{\{x_i \in O : x_{ij} > d} g_i \right)^2}{n_{r \mid O}^j (d)} \right),
+> $$
+> *where $n_O = \sum I[x_i \in O]$, $n_{l \mid O}^j (d) = \sum I[x_i \in O : x_{ij} \leq d]$ and $n_{r \mid O}^j (d) = \sum I[x_i \in P : x_{ij} > d]$.*
+
+With the above definition, we can defined the variance gain over the GOSS subset, i.e.,
+$$
+\tilde{V}_j(d) = \frac{1}{n} \left( \frac{\left( \sum_{x_i \in A_l} g_i + \frac{1-a}{b} \sum_{x_i \in B_l} g_i \right)^2}{n_l^j(d)} + \frac{\left( \sum_{x_i \in A_r} g_i + \frac{1-a}{b} \sum_{x_i \in B_r} g_i \right)^2}{n_r^j(d)} \right),
+$$
+where $A_l = \{ x_i \in A : x_{ij} \leq d\}$ , $A_r = \{ x_i \in A : x_{ij} > d \}$, $B_l = \{ x_i \in B : x_{ij} \leq d \}$, $B_r = \{x_i \in B : x_{ij} > d \}$, and the coefficient $\frac{1-a}{b}$ is used to normalize the sum of the gradients over $B$ back the the size of $A^c$.
+
+#### Remark 1 (Hoeffding's Inequality)
+
+> **The weak law of large numbers**
+> $$
+> \lim_{n \to \infty} \Pr \left( \left| \bar{X}_n - \mu \right| > \varepsilon \right) = 0.
+> $$
+>
+
+We already know that the sample sizes goes larger, the sample and true means will likely be very close to each other by a non-zero distance no greater than epsilon. The weak law of large numbers states that the convergence is guaranteed. Within the framework of reducing the generalization gap, it can be interpreted that the generalization gap is closing. But, this law does not provide information about how fast it converges.
+
+To offer this information, we adopted the concentration inequalities, which is a set of inequalities that quantifies how much random variables deviate from their expected values. Hoeffding's Inequality is one of them that provides an upper bound on the probability that the sum of bounded independent random variables deviates from its expected value by more than a certain amount. 
+
+> **Heoffding's Inequality**
+> $$
+> P(|R(h) - R_{\text{emp}}| > \varepsilon) \leq 2 \exp(-2m\varepsilon^2),
+> $$
+> for some $\varepsilon > 0$ where $m$ is the size of samples .
+
+This means that the probability of the generalization gap exceeding $\varepsilon$ exponentially decays as the dataset size goes larger.
+
+Let $\delta = 2 \exp (-2m \varepsilon^2)$ be a tolerance lever. Then we can say that with a confidence $1 - \delta$ :
+$$
+|R(h) - R_{\text{emp}}| \leq \varepsilon \implies R(h) \leq R_{\text{emp}}(h) + \varepsilon,
+$$
+and
+$$
+\log \frac{\delta}{2} = -2m\varepsilon^2 \implies \varepsilon = \sqrt{\frac{\log 2/\delta}{2m}}.
+$$
+The some algebraic results state that the generalization error is bounded by the size of samples.
+
+The following theorem indicates that GOSS will not lose much training accuracy and will outperform random sampling.
+
+#### Theorem 3.2
+
+> We denote the approximation error in GOSS as $\mathscr{E}(d) = \left| \tilde{V}_j(d) - V_j(d) \right|$ and $\bar{g}_l^j(d) = \frac{\sum_{x_i \in (A \cup A^c)_l} |g_i|}{n_l^j(d)}$, $\bar{g}_r^j(d) = \frac{\sum_{x_i \in (A \cup A^c)_r} |g_i|}{n_r^j(d)}$. With probability at least $1 - \delta$, we have
+> $$
+> \mathscr{E}(d) \leq C^2_{a, b} \ln 1/\delta \cdot \max \left\{ \frac{1}{n_l^j(d)}, \frac{1}{n_r^j(d)} \right\} + 2DC_{a, b} \sqrt{\frac{\ln 1/\delta}{n}},
+> $$
+> where $C_{a, b} = \frac{1 - a}{\sqrt{b}} \max_{x_i \in A^c} |g_i|$, and $D = \max(\bar{g}_l^j(d), \bar{g}_r^j(d))$.
+
+***Proof :***
+
+For a fixed $d$, we have
+$$
+\begin{aligned}
+\tilde{V}_j(d) - V_j(d) &= \left( \frac{\left( \sum_{x_i \in A_l} g_i + \frac{1-a}{b} \sum_{x_i \in B_l} g_i \right)^2}{n_l^j(d)} + \frac{\left( \sum_{x_i \in A_r} g_i + \frac{1-a}{b} \sum_{x_i \in B_r} g_i \right)^2}{n_r^j(d)} \right) - \left( \frac{\left( \sum_{x_i \in A_l} g_i + \sum_{x_i \in A_l^c} g_i \right)^2}{n_l^j(d)}  + \frac{\left( \sum_{x_i \in A_r} g_i + \sum_{x_i \in A_r^c} g_i \right)^2}{n_r^j(d)} \right)
+\end{aligned}
+$$
