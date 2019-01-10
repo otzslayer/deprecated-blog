@@ -69,7 +69,7 @@ To offer this information, we adopted the concentration inequalities, which is a
 
 This means that the probability of the generalization gap exceeding $\varepsilon$ exponentially decays as the dataset size goes larger.
 
-Let $\delta = 2 \exp (-2m \varepsilon^2)$ be a tolerance lever. Then we can say that with a confidence $1 - \delta$ :
+Let $\delta = 2 \exp (-2m \varepsilon^2)$ be a tolerance lever. Then we can say that with a confidence $1 - \delta​$ :
 $$
 |R(h) - R_{\text{emp}}| \leq \varepsilon \implies R(h) \leq R_{\text{emp}}(h) + \varepsilon,
 $$
@@ -94,6 +94,28 @@ The following theorem indicates that GOSS will not lose much training accuracy a
 For a fixed $d$, we have
 $$
 \begin{aligned}
-\tilde{V}_j(d) - V_j(d) &= \left( \frac{\left( \sum_{x_i \in A_l} g_i + \frac{1-a}{b} \sum_{x_i \in B_l} g_i \right)^2}{n_l^j(d)} + \frac{\left( \sum_{x_i \in A_r} g_i + \frac{1-a}{b} \sum_{x_i \in B_r} g_i \right)^2}{n_r^j(d)} \right) - \left( \frac{\left( \sum_{x_i \in A_l} g_i + \sum_{x_i \in A_l^c} g_i \right)^2}{n_l^j(d)}  + \frac{\left( \sum_{x_i \in A_r} g_i + \sum_{x_i \in A_r^c} g_i \right)^2}{n_r^j(d)} \right)
+\tilde{V}_j(d)- V_j(d) &= \left( \frac{\left( \sum_{x_i \in A_l} g_i + \frac{1-a}{b} \sum_{x_i \in B_l} g_i \right)^2}{n_l^j(d)} + \frac{\left( \sum_{x_i \in A_r} g_i + \frac{1-a}{b} \sum_{x_i \in B_r} g_i \right)^2}{n_r^j(d)} \right) - \left( \frac{\left( \sum_{x_i \in A_l} g_i + \sum_{x_i \in A_l^c} g_i \right)^2}{n_l^j(d)}  + \frac{\left( \sum_{x_i \in A_r} g_i + \sum_{x_i \in A_r^c} g_i \right)^2}{n_r^j(d)} \right) \\
+& = \frac{1}{n_l^j(d)} \left( A_l^2 + \frac{2(1-a)}{b} A_l B_l + \left( \frac{1-a}{b} \right)^2 B_l^2 - A_l^2 - 2 A_l A_l^c - A_l^c \right) + \frac{1}{n_r^j(d)} \left( A_r^2 + \frac{2(1-a)}{b} A_r B_r + \left( \frac{1-a}{b} \right)^2 B_r^2 - A_r^2 - 2 A_r A_r^c - A_r^c \right) \\ 
+&= \frac{1}{n_l^j(d)} \left( \frac{2(1-a)}{b} A_l B_l + \left( \frac{1-a}{b} \right)^2 B_l^2 - 2 A_l A_l^c - A_l^c \right) + \frac{1}{n_r^j(d)} \left( \frac{2(1-a)}{b} A_r B_r + \left( \frac{1-a}{b} \right)^2 B_r^2 - 2 A_r A_r^c - A_r^c \right) \\ 
+&= \frac{1}{n_l^j(d)} \left( \frac{2(1-a)}{b} A_l B_l + \left( \frac{1-a}{b} \right)^2 B_l^2 - 2 A_l A_l^c - A_l^c + \frac{1-a}{b} A_l^c B_l - \frac{1-a}{b} A_l^c B_l \right) \\ & \quad + \frac{1}{n_r^j(d)} \left( \frac{2(1-a)}{b} A_r B_r + \left( \frac{1-a}{b} \right)^2 B_r^2 - 2 A_r A_r^c - A_r^c + \frac{1-a}{b} A_r^c B_r - \frac{1-a}{b} A_r^c B_r \right) \\ 
+& = \frac{\frac{1-a}{b} B_l + A_l^c + 2 A_l}{n_l^j(d)} \left( \frac{1-a}{b} B_l - A_l^c \right) + \frac{\frac{1-a}{b} B_r + A_r^c + 2 A_r}{n_r^j(d)} \left( \frac{1-a}{b} B_r - A_r^c \right) \\
+& = C_l \left( \frac{1-a}{b} \sum_{x_i \in B_l} g_i  - \sum_{x_i \in A_l^c} g_i \right) + C_r \left( \frac{1-a}{b} \sum_{x_i \in B_r} g_i  - \sum_{x_i \in A_r^c} g_i \right).
 \end{aligned}
 $$
+
+Thus, we have
+$$
+|\tilde{V}_j(d) - V_j(d)| \leq \max \{ C_l, C_r \} \left| \frac{1-a}{b} \sum_{x_i \in B} g_i - \sum_{x_i \in A_c} g_i \right|.
+$$
+Firstly, we bound $C_l$ and $C_r$. Let $D_{A^c} = \max_{x_i \in A^c} |g_i|$. It follows that $g_i \leq D_{A^c}$ for all $x_i \in B_l$. Note that 
+$$
+D_{A^c} + \sum_{x_i \in A_l} g_i \leq D \implies \sum_{x_i \in A_l} g_i \leq D - D_{A^c}.
+$$
+Then we have
+$$
+\begin{aligned}
+C_l &= \frac{\left( \frac{1-a}{b} \sum_{x_i \in B_l} g_i + \sum_{x_i \in A_l} g_i \right)}{n_l^j(d)} + \frac{\left( \sum_{x_i \in A_l^c} g_i + \sum_{x_i \in A_l} g_i \right)}{n_l^j(d)} \\ 
+& \leq 
+\end{aligned}
+$$
+
