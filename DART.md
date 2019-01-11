@@ -17,8 +17,6 @@
 
 [^1]: Rashmi, K. V., and Ran Gilad-Bachrach. "Dart: Dropouts meet multiple additive regression trees." *International Conference on Artificial Intelligence and Statistics*. 2015.
 
-
-
 # Mathematical Concepts for New Novel Features of LightGBM
 
 ## Gradient-based One-side Sampling (GOSS)
@@ -65,7 +63,7 @@ To offer this information, we adopted the concentration inequalities, which is a
 > $$
 > P(|R(h) - R_{\text{emp}}| > \varepsilon) \leq 2 \exp(-2m\varepsilon^2),
 > $$
-> for some $\varepsilon > 0$ where $m$ is the size of samples .
+> for some $\varepsilon > 0$ where $m​$ is the size of samples .
 
 This means that the probability of the generalization gap exceeding $\varepsilon$ exponentially decays as the dataset size goes larger.
 
@@ -109,13 +107,32 @@ $$
 $$
 Firstly, we bound $C_l$ and $C_r$. Let $D_{A^c} = \max_{x_i \in A^c} |g_i|$. It follows that $g_i \leq D_{A^c}$ for all $x_i \in B_l$. Note that 
 $$
-D_{A^c} + \sum_{x_i \in A_l} g_i \leq D \implies \sum_{x_i \in A_l} g_i \leq D - D_{A^c}.
+\frac{D_{A^c} + \sum_{x_i \in A_l} g_i}{n_l^j(d)} \leq D \implies \frac{\sum_{x_i \in A_l} g_i}{n_l^j(d)} \leq D - \frac{D_{A^c}}{n_l^j(d)}.
 $$
 Then we have
 $$
 \begin{aligned}
 C_l &= \frac{\left( \frac{1-a}{b} \sum_{x_i \in B_l} g_i + \sum_{x_i \in A_l} g_i \right)}{n_l^j(d)} + \frac{\left( \sum_{x_i \in A_l^c} g_i + \sum_{x_i \in A_l} g_i \right)}{n_l^j(d)} \\ 
-& \leq 
+& \leq \frac{D_{A^c} \left| \frac{1-a}{b}\sum I_{[x_i \in B_l]} + \sum I_{[x_i \in A_l^c]} \right|}{n_l^j(d)} + 2D - \frac{2D_{A^c}}{n_l^j(d)} \\
+& = \frac{D_{A^c} \left| \frac{1-a}{b} \sum I_{[x_i \in B_l]} - \sum I_{[x_i \in A_l^c]} \right|}{n_l^j(d)} + 2D \\
+& = \frac{D_{A^c} (1-a)n}{n_l^j(d)} \left| \frac{\sum I_{[x_i \in B_l]}}{bn} - \frac{\sum I_{x_i \in A_l^c}}{(1-a)n} \right| + 2D.
 \end{aligned}
 $$
 
+By Hoeffding's inequality, we have with probability at least $1 - \delta$,
+$$
+C_l \leq \frac{D_{A^c}(1-a)n}{n_l^j(d)} \sqrt{\frac{\log 2/\delta}{2bn}} + 2D.
+$$
+Similarly, we have $C_r \leq \frac{D_{A^c}(1-a)n}{n_r^j(d)} \sqrt{\frac{\log 2/\delta}{2bn}} + 2D$. Moreover, we have with probability at least $1 - \delta​$,
+$$
+\frac{1}{n} \left| \frac{1-a}{b} \sum_{x_i \in B} g_i - \sum_{x_i \in A^c} g_i \right| \leq D_{A^c}(1-a) \sqrt{\frac{\log 2/\delta}{2bn}}.
+$$
+Thus, we have with probability at least $1-\delta​$,
+
+
+$$
+\begin{aligned}
+\mathscr{E}(d) &= \left| \frac{\hat{V}_j(d)}{n} - \frac{V_j(d)}{n} \right| \\
+&\leq \left( D_{A^c}(1-a) \max \left\{ \frac{1}{n_l^j(d)}, \frac{1}{n_r^j(d)} \right\} \sqrt\frac{n \log 1/\delta}{2b} + 2D \right) D_{A^c}(1-a) \sqrt{\frac{\log 2/\delta}{2bn}}
+\end{aligned}
+$$
